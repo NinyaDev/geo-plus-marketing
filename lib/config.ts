@@ -13,8 +13,8 @@ function optionalEnv(name: string, fallback: string = ""): string {
 export function getConfig() {
   return {
     telegram: {
-      botToken: requireEnv("TELEGRAM_BOT_TOKEN"),
-      webhookSecret: requireEnv("TELEGRAM_WEBHOOK_SECRET"),
+      botToken: optionalEnv("TELEGRAM_BOT_TOKEN"),
+      webhookSecret: optionalEnv("TELEGRAM_WEBHOOK_SECRET"),
       webhookUrl: optionalEnv("TELEGRAM_WEBHOOK_URL"),
     },
     openai: {
