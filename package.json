@@ -6,12 +6,22 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "webhook:set": "tsx --env-file=.env scripts/set-webhook.ts",
+    "webhook:info": "tsx -e \"fetch('https://api.telegram.org/bot'+process.env.TELEGRAM_BOT_TOKEN+'/getWebhookInfo').then(r=>r.json()).then(console.log)\""
   },
   "dependencies": {
+    "@ai-sdk/openai": "^3.0.39",
+    "@ai-sdk/xai": "^3.0.64",
+    "@google/genai": "^1.43.0",
+    "@supabase/supabase-js": "^2.98.0",
+    "@voltagent/core": "^2.6.3",
+    "ai": "^6.0.111",
     "next": "16.1.6",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "telegraf": "^4.16.3",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -21,6 +31,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
     "typescript": "^5"
   }
 }
