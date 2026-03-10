@@ -19,7 +19,7 @@ export async function handleMessage(
   if (skill) {
     response = await dispatchSkill(skill, message);
   } else {
-    // No match → VoltAgent marketing agent (GPT-4o)
+    // No match → VoltAgent marketing agent (Claude Sonnet 4.6)
     try {
       const history = getHistory(message.userId);
       const conversationHistory = history
@@ -40,9 +40,9 @@ export async function handleMessage(
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
 
-      if (errorMessage.includes("API key")) {
+      if (errorMessage.includes("API key") || errorMessage.includes("api_key")) {
         response = {
-          text: "The AI agent is not configured yet. Please set up your OPENAI_API_KEY environment variable.",
+          text: "The AI agent is not configured yet. Please set up your ANTHROPIC_API_KEY environment variable.",
         };
       } else {
         response = {
@@ -66,7 +66,7 @@ export function getStatus(): { skills: string[]; uptime: number } {
   return {
     skills: [
       ...getSkills().map((s) => s.name),
-      "marketing-agent (VoltAgent + GPT-4o)",
+      "marketing-agent (VoltAgent + Claude Sonnet 4.6)",
     ],
     uptime: process.uptime(),
   };
