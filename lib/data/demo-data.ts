@@ -14,16 +14,19 @@ export interface Business {
 
 export interface Lead {
   id: string;
-  business_id: string;
+  business_id: string | null;
+  source: string;
   name: string;
   email: string;
   phone: string;
-  business_name: string;
-  service_type: string;
+  service_requested: string;
   city: string;
-  message: string;
+  website_url?: string;
+  gbp_url?: string;
+  quality_score?: number;
   status: "new" | "contacted" | "qualified" | "converted" | "lost";
-  source: string;
+  notes: string;
+  metadata: Record<string, unknown>;
   created_at: string;
 }
 
@@ -97,71 +100,71 @@ export const demoBusiness: Business = {
 export const demoLeads: Lead[] = [
   {
     id: "lead_001",
-    business_id: "biz_001",
+    business_id: null,
     name: "Maria Rodriguez",
     email: "maria.r@miamidental.com",
     phone: "3055559876",
-    business_name: "Miami Dental Group",
-    service_type: "Full GEO Package",
+    service_requested: "Full GEO Package",
     city: "Miami",
-    message: "Our competitors are showing up in ChatGPT results but we're not. Need help ASAP.",
     status: "converted",
+    notes: "Our competitors are showing up in ChatGPT results but we're not. Need help ASAP.",
+    metadata: { business_name: "Miami Dental Group" },
     source: "landing_page",
     created_at: "2026-02-28T14:30:00Z",
   },
   {
     id: "lead_002",
-    business_id: "biz_001",
+    business_id: null,
     name: "James Thompson",
     email: "j.thompson@thompsonlaw.com",
     phone: "3055554321",
-    business_name: "Thompson Legal Partners",
-    service_type: "AI Visibility Scan",
+    service_requested: "AI Visibility Scan",
     city: "Coral Gables",
-    message: "We want to understand how AI search engines see our firm. Interested in the free scan.",
     status: "qualified",
+    notes: "We want to understand how AI search engines see our firm. Interested in the free scan.",
+    metadata: { business_name: "Thompson Legal Partners" },
     source: "blog",
     created_at: "2026-03-01T09:15:00Z",
   },
   {
     id: "lead_003",
-    business_id: "biz_001",
+    business_id: null,
     name: "Ana Gutierrez",
     email: "ana@sunshineHVAC.com",
     phone: "3055558765",
-    business_name: "Sunshine HVAC",
-    service_type: "Content Optimization",
+    service_requested: "Content Optimization",
     city: "Miami Beach",
-    message: "We have great Google rankings but AI search never mentions us. What can we do?",
     status: "contacted",
+    notes: "We have great Google rankings but AI search never mentions us. What can we do?",
+    metadata: { business_name: "Sunshine HVAC" },
     source: "google",
     created_at: "2026-03-02T11:45:00Z",
   },
   {
     id: "lead_004",
-    business_id: "biz_001",
+    business_id: null,
     name: "Robert Chen",
     email: "r.chen@chenrealty.com",
     phone: "3055553456",
-    business_name: "Chen Realty Group",
-    service_type: "Schema & Structured Data",
+    service_requested: "Schema & Structured Data",
     city: "Doral",
-    message: "Need structured data and schema markup for our 12 listings pages. Want AI to cite us.",
     status: "new",
+    notes: "Need structured data and schema markup for our 12 listings pages. Want AI to cite us.",
+    metadata: { business_name: "Chen Realty Group" },
     source: "contact_form",
     created_at: "2026-03-03T16:20:00Z",
   },
   {
     id: "lead_005",
-    business_id: "biz_001",
+    business_id: null,
     name: "Sarah Miller",
     email: "sarah@millerplumbing.com",
     phone: "3055557654",
-    business_name: "Miller Plumbing Co",
-    service_type: "AI Visibility Scan",
+    service_requested: "AI Visibility Scan",
     city: "Kendall",
-    message: "Heard about AI search optimization on a podcast. Want to see where we stand.",
     status: "new",
+    notes: "Heard about AI search optimization on a podcast. Want to see where we stand.",
+    metadata: { business_name: "Miller Plumbing Co" },
     source: "social_media",
     created_at: "2026-03-04T08:00:00Z",
   },

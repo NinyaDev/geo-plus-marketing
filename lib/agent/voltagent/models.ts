@@ -1,11 +1,11 @@
 import { anthropic } from "@ai-sdk/anthropic";
 import { xai } from "@ai-sdk/xai";
 
-// Claude Opus 4.5 — primary content generation & agent brain
-export const contentModel = anthropic("claude-opus-4-5-20250219");
+// Claude Sonnet 4.6 — primary content generation & agent brain
+export const contentModel = anthropic("claude-sonnet-4-6-20250514");
 
-// Claude Sonnet — lighter model for simple tasks
-export const lightModel = anthropic("claude-sonnet-4-5-20250514");
+// Claude Haiku 4.5 — lighter model for simple tasks
+export const lightModel = anthropic("claude-haiku-4-5-20251001");
 
 // Grok — research & scraping intelligence
 export const researchModel = xai("grok-3-mini-fast");

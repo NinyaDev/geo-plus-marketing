@@ -39,7 +39,7 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
                       <p className="text-xs text-slate-500">{lead.email}</p>
                     </div>
                   </td>
-                  <td className="py-3 pr-4 text-slate-600">{lead.service_type}</td>
+                  <td className="py-3 pr-4 text-slate-600">{lead.service_requested}</td>
                   <td className="py-3 pr-4 text-slate-600">{lead.city}</td>
                   <td className="py-3 pr-4">
                     <Badge variant={statusVariant[lead.status] ?? "default"}>

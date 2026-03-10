@@ -27,10 +27,16 @@ export async function POST(request: Request) {
 
     const data = parsed.data;
 
-    // 1. Save to Supabase (or mock)
+    // 1. Save to Supabase (or mock) — map form fields to DB columns
     const result = await createLead({
-      ...data,
-      business_id: "biz_001",
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      service_requested: data.service_type,
+      city: data.city,
+      notes: data.message,
+      metadata: data.business_name ? { business_name: data.business_name } : {},
+      business_id: null,
       source: "contact_form",
     });
 
