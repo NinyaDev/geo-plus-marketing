@@ -149,7 +149,12 @@ export function registerBotHandlers(bot: Telegraf): void {
       const chunks = chunkMessage(response.text);
 
       for (const chunk of chunks) {
-        await ctx.reply(chunk);
+        try {
+          await ctx.reply(chunk, { parse_mode: "Markdown" });
+        } catch {
+          // If Markdown parsing fails, send as plain text
+          await ctx.reply(chunk);
+        }
       }
     } catch (error) {
       console.error("Handler error:", error);
