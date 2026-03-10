@@ -1,6 +1,7 @@
 import { generateText, stepCountIs } from "ai";
 import { contentModel } from "../models";
 import { allTools } from "../tools";
+import { trackTokenUsage } from "../guards";
 
 const SYSTEM_PROMPT = `You are GEOPlusMarketing — a marketing assistant for franchisees who sell AI Search Visibility (GEO) services to local businesses.
 
@@ -33,6 +34,10 @@ When a user first interacts, greet them briefly and ask what they need help with
 
 For tool calls, always include the user's telegramUserId when needed for database operations.`;
 
+// Sonnet 4.6 pricing per million tokens
+const COST_PER_M_INPUT = 3.0;
+const COST_PER_M_OUTPUT = 15.0;
+
 export interface MarketingAgentOptions {
   userId: string;
   conversationHistory?: Array<{ role: "user" | "assistant"; content: string }>;
@@ -55,9 +60,25 @@ export async function runMarketingAgent(
     model: contentModel,
     messages,
     tools: allTools,
-    stopWhen: stepCountIs(5),
+    stopWhen: stepCountIs(3),
     toolChoice: "auto",
   });
+
+  // Track token usage and log cost estimate
+  const usage = result.usage;
+  if (usage) {
+    const inTokens = usage.inputTokens ?? 0;
+    const outTokens = usage.outputTokens ?? 0;
+    const inputCost = (inTokens / 1_000_000) * COST_PER_M_INPUT;
+    const outputCost = (outTokens / 1_000_000) * COST_PER_M_OUTPUT;
+    const totalCost = inputCost + outputCost;
+
+    trackTokenUsage(options.userId, inTokens, outTokens);
+
+    console.log(
+      `[Cost] user=${options.userId} in=${inTokens} out=${outTokens} steps=${result.steps?.length ?? 1} est=$${totalCost.toFixed(4)}`
+    );
+  }
 
   return result.text || "I processed your request but have no text response. Please try again.";
 }

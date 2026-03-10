@@ -16,10 +16,15 @@ export async function generateMetadata({
   const { city, service } = await params;
   const displayCity = toDisplayName(city);
   const displayService = toDisplayName(service);
-  const title = `${displayService} in ${displayCity} | GEOPlusMarketing`;
-  const description = `Professional ${displayService.toLowerCase()} services in ${displayCity}. Licensed, insured, and trusted by the local community. Get a free quote today.`;
+  const title = `Is Your ${displayService} Business Visible to AI in ${displayCity}? | GEOPlusMarketing`;
+  const description = `80% of searchers use AI summaries. Find out if ChatGPT, Perplexity, and Google AI recommend your ${displayService.toLowerCase()} business in ${displayCity}. Get a free AI visibility scan.`;
 
-  return { title, description };
+  return {
+    title,
+    description,
+    openGraph: { title, description },
+    twitter: { card: "summary_large_image", title, description },
+  };
 }
 
 export default async function LandingPage({

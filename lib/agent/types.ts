@@ -17,10 +17,3 @@ export interface ConversationTurn {
   timestamp: number;
   skill?: string;
 }
-
-export interface MemoryEntry {
-  key: string;
-  value: string;
-  createdAt: number;
-  updatedAt: number;
-}

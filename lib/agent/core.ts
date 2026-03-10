@@ -6,7 +6,7 @@ import { runMarketingAgent } from "./voltagent/agents/marketing";
 export async function handleMessage(
   message: AgentMessage
 ): Promise<AgentResponse> {
-  addTurn(message.userId, {
+  await addTurn(message.userId, {
     role: "user",
     content: message.text,
     timestamp: message.timestamp,
@@ -19,9 +19,9 @@ export async function handleMessage(
   if (skill) {
     response = await dispatchSkill(skill, message);
   } else {
-    // No match → VoltAgent marketing agent (Claude Sonnet 4.6)
+    // No match → marketing agent (Claude Sonnet 4.6)
     try {
-      const history = getHistory(message.userId);
+      const history = await getHistory(message.userId);
       const conversationHistory = history
         .slice(-20)
         .map((turn) => ({
@@ -36,7 +36,7 @@ export async function handleMessage(
 
       response = { text: aiResponse, skill: "marketing-agent" };
     } catch (error) {
-      console.error("VoltAgent error:", error);
+      console.error("Agent error:", error);
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
 
@@ -52,7 +52,7 @@ export async function handleMessage(
     }
   }
 
-  addTurn(message.userId, {
+  await addTurn(message.userId, {
     role: "assistant",
     content: response.text,
     timestamp: Date.now(),
@@ -66,7 +66,7 @@ export function getStatus(): { skills: string[]; uptime: number } {
   return {
     skills: [
       ...getSkills().map((s) => s.name),
-      "marketing-agent (VoltAgent + Claude Sonnet 4.6)",
+      "marketing-agent (Claude Sonnet 4.6)",
     ],
     uptime: process.uptime(),
   };

@@ -79,29 +79,22 @@ export function registerBotHandlers(bot: Telegraf): void {
         `/help — This help message\n` +
         `/status — Agent status & loaded tools\n\n` +
         `What I can do (just ask in natural language):\n\n` +
-        `📋 Business Setup\n` +
-        `• Register your business profile\n` +
-        `• Manage business details\n\n` +
-        `✍️ Content Creation\n` +
-        `• Generate geo-targeted blog posts\n` +
-        `• Create social media posts (GBP, Instagram, Facebook)\n` +
-        `• Draft review responses\n` +
-        `• Generate landing pages\n\n` +
-        `🎯 Lead Generation\n` +
-        `• Track and manage leads\n` +
-        `• Prospect new clients in your area\n` +
-        `• Generate lead reports\n\n` +
-        `🔍 GEO Optimization\n` +
-        `• Run AI visibility audits\n` +
-        `• Build citation plans\n` +
-        `• Generate schema markup (JSON-LD)\n\n` +
-        `🎨 Image Generation\n` +
-        `• Create CTA advertising visuals\n` +
-        `• Design social media graphics\n\n` +
-        `📈 Campaigns & Reports\n` +
-        `• Create full marketing campaigns\n` +
-        `• Generate status reports\n` +
-        `• Deep business research`
+        `Content Creation\n` +
+        `- Generate geo-targeted blog posts\n` +
+        `- Create social media posts (GBP, Instagram, Facebook)\n` +
+        `- Draft review responses\n` +
+        `- Generate landing pages with schema markup\n\n` +
+        `Lead Generation\n` +
+        `- Prospect local businesses with quality scoring\n` +
+        `- Track and manage leads\n` +
+        `- Generate lead reports\n\n` +
+        `Images & Assets\n` +
+        `- Create CTA advertising visuals\n` +
+        `- Generate JSON-LD structured data\n\n` +
+        `Campaigns & Research\n` +
+        `- Create full marketing campaign plans\n` +
+        `- Generate status reports\n` +
+        `- Deep business and market research`
     );
   });
 
