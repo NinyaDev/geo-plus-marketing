@@ -73,22 +73,22 @@ export interface DashboardStats {
 
 export const demoBusiness: Business = {
   id: "biz_001",
-  name: "Sunshine Plumbing",
-  slug: "sunshine-plumbing",
+  name: "GEOPlusMarketing",
+  slug: "geoplusmarketing",
   city: "Miami",
   state: "FL",
   phone: "3055551234",
-  email: "info@sunshineplumbing.com",
-  website: "https://sunshineplumbing.com",
+  email: "info@geoplusmarketing.com",
+  website: "https://geoplusmarketing.com",
   services: [
-    "Emergency Plumbing",
-    "Water Heater Installation",
-    "Drain Cleaning",
-    "Pipe Repair",
-    "Bathroom Remodeling",
+    "AI Visibility Scans",
+    "Schema & Structured Data",
+    "Content Optimization",
+    "Ongoing AI Monitoring",
+    "Full GEO Package",
   ],
   description:
-    "Miami's trusted plumbing experts. 24/7 emergency service, licensed & insured, serving all of Miami-Dade County.",
+    "AI Search Visibility partner helping local businesses get found, recommended, and cited by every major AI engine.",
   created_at: "2025-01-15T10:00:00Z",
 };
 
@@ -99,12 +99,12 @@ export const demoLeads: Lead[] = [
     id: "lead_001",
     business_id: "biz_001",
     name: "Maria Rodriguez",
-    email: "maria.r@email.com",
+    email: "maria.r@miamidental.com",
     phone: "3055559876",
-    business_name: "",
-    service_type: "Emergency Plumbing",
+    business_name: "Miami Dental Group",
+    service_type: "Full GEO Package",
     city: "Miami",
-    message: "Burst pipe in kitchen, need urgent help!",
+    message: "Our competitors are showing up in ChatGPT results but we're not. Need help ASAP.",
     status: "converted",
     source: "landing_page",
     created_at: "2026-02-28T14:30:00Z",
@@ -113,12 +113,12 @@ export const demoLeads: Lead[] = [
     id: "lead_002",
     business_id: "biz_001",
     name: "James Thompson",
-    email: "j.thompson@email.com",
+    email: "j.thompson@thompsonlaw.com",
     phone: "3055554321",
-    business_name: "Thompson Properties",
-    service_type: "Water Heater Installation",
+    business_name: "Thompson Legal Partners",
+    service_type: "AI Visibility Scan",
     city: "Coral Gables",
-    message: "Looking to replace old water heater in rental property.",
+    message: "We want to understand how AI search engines see our firm. Interested in the free scan.",
     status: "qualified",
     source: "blog",
     created_at: "2026-03-01T09:15:00Z",
@@ -127,12 +127,12 @@ export const demoLeads: Lead[] = [
     id: "lead_003",
     business_id: "biz_001",
     name: "Ana Gutierrez",
-    email: "ana.g@email.com",
+    email: "ana@sunshineHVAC.com",
     phone: "3055558765",
-    business_name: "",
-    service_type: "Drain Cleaning",
+    business_name: "Sunshine HVAC",
+    service_type: "Content Optimization",
     city: "Miami Beach",
-    message: "Slow drain in bathroom, getting worse.",
+    message: "We have great Google rankings but AI search never mentions us. What can we do?",
     status: "contacted",
     source: "google",
     created_at: "2026-03-02T11:45:00Z",
@@ -141,12 +141,12 @@ export const demoLeads: Lead[] = [
     id: "lead_004",
     business_id: "biz_001",
     name: "Robert Chen",
-    email: "r.chen@email.com",
+    email: "r.chen@chenrealty.com",
     phone: "3055553456",
-    business_name: "Chen Restaurant Group",
-    service_type: "Pipe Repair",
+    business_name: "Chen Realty Group",
+    service_type: "Schema & Structured Data",
     city: "Doral",
-    message: "Need commercial pipe inspection and repair for restaurant.",
+    message: "Need structured data and schema markup for our 12 listings pages. Want AI to cite us.",
     status: "new",
     source: "contact_form",
     created_at: "2026-03-03T16:20:00Z",
@@ -155,12 +155,12 @@ export const demoLeads: Lead[] = [
     id: "lead_005",
     business_id: "biz_001",
     name: "Sarah Miller",
-    email: "sarah.m@email.com",
+    email: "sarah@millerplumbing.com",
     phone: "3055557654",
-    business_name: "",
-    service_type: "Bathroom Remodeling",
+    business_name: "Miller Plumbing Co",
+    service_type: "AI Visibility Scan",
     city: "Kendall",
-    message: "Interested in full bathroom remodel, 2 bathrooms.",
+    message: "Heard about AI search optimization on a podcast. Want to see where we stand.",
     status: "new",
     source: "social_media",
     created_at: "2026-03-04T08:00:00Z",
@@ -173,178 +173,210 @@ export const demoContent: ContentPiece[] = [
   {
     id: "content_001",
     business_id: "biz_001",
-    title: "5 Signs You Need Emergency Plumbing in Miami",
-    slug: "5-signs-you-need-emergency-plumbing-in-miami",
+    title: "Why AI Search Is the Biggest Threat to Your Business Right Now",
+    slug: "why-ai-search-is-biggest-threat-to-your-business",
     type: "blog",
     status: "published",
-    body: `# 5 Signs You Need Emergency Plumbing in Miami
+    body: `# Why AI Search Is the Biggest Threat to Your Business Right Now
 
-Living in Miami means dealing with unique plumbing challenges — from aging pipes in older homes to tropical storm damage. Here are five signs you need to call an emergency plumber right away.
+If you're a business owner who has invested in SEO for years, this is going to be uncomfortable to read. The rules are changing — fast.
 
-## 1. Burst or Leaking Pipes
+## The Numbers Don't Lie
 
-If you notice water spraying from a pipe or a sudden drop in water pressure, you likely have a burst pipe. This can cause significant water damage in minutes. **Shut off your main water valve immediately** and call a licensed plumber.
+According to Bain & Company's February 2025 research, **80% of search users now rely on AI-generated summaries** for more than 40% of their searches. That means your customers are getting answers without ever clicking on your website.
 
-## 2. Sewage Backup
+It gets worse:
 
-A sewage backup is not just unpleasant — it's a health hazard. If you notice foul odors, gurgling drains, or sewage coming up through floor drains, this is an emergency that requires immediate professional attention.
+- **61% drop** in organic click-through rates on queries where AI Overviews appear (Seer Interactive)
+- **58.5% of Google searches** are now zero-click (SparkToro/Datos)
+- **$750 billion** in US revenue is at risk from AI search disruption by 2028 (McKinsey)
 
-## 3. No Hot Water
+## What This Means for Local Businesses
 
-While not always an emergency, losing hot water completely can indicate a failing water heater. In some cases, a leaking water heater can cause flooding and even pose a safety risk if it's gas-powered.
+When someone asks ChatGPT "Who's the best dentist in Miami?", the AI doesn't look at your Google rankings. It looks at:
 
-## 4. Flooding from Appliances
+- **Structured data** on your website (JSON-LD, schema markup)
+- **Consistent citations** across the web
+- **Authority signals** from trusted sources
+- **Content quality** that demonstrates genuine expertise
 
-Washing machines, dishwashers, and water heaters can all fail and cause flooding. If you notice standing water around any appliance, disconnect it from power if safe to do so and call for help.
+If you don't have these signals, the AI will recommend your competitor instead. Simple as that.
 
-## 5. Persistent Drain Clogs
+## SEO Isn't Dead — But It's Not Enough
 
-A single slow drain is usually a minor issue, but if multiple drains in your home are slow or clogged simultaneously, this could indicate a main sewer line problem — a serious issue that needs professional diagnosis.
+Traditional SEO still matters. Google Search isn't going away tomorrow. But if you're **only** doing SEO, you're fighting with one hand tied behind your back.
+
+**Generative Engine Optimization (GEO)** is the new layer you need. It works alongside your existing SEO to ensure AI engines can find, understand, and recommend your business.
+
+## What You Can Do Today
+
+1. **Get scanned** — Find out how AI engines currently see your brand
+2. **Fix your structured data** — Add JSON-LD schema, llms.txt, and agent.json to your website
+3. **Build authority signals** — Get cited in sources that AI engines trust
+4. **Monitor continuously** — AI visibility changes weekly; you need to track it
 
 ---
 
-**Don't wait until a small issue becomes a disaster.** Sunshine Plumbing offers 24/7 emergency service across Miami-Dade County. Call us at (305) 555-1234 for fast, reliable plumbing help.`,
+**Don't wait until your competitors have already locked in their AI visibility advantage.** [Get your free scan today](/contact) and see exactly where you stand.`,
     excerpt:
-      "Living in Miami means dealing with unique plumbing challenges. Here are five signs you need to call an emergency plumber right away.",
-    author: "Sunshine Plumbing Team",
-    tags: ["emergency-plumbing", "miami", "plumbing-tips"],
+      "80% of search users now rely on AI summaries. If ChatGPT can't find your business, your competitors are stealing your customers.",
+    author: "GEOPlusMarketing Team",
+    tags: ["ai-search", "geo", "business-growth"],
     published_at: "2026-02-15T10:00:00Z",
     created_at: "2026-02-14T08:00:00Z",
   },
   {
     id: "content_002",
     business_id: "biz_001",
-    title: "Water Heater Buying Guide: Tank vs. Tankless in South Florida",
-    slug: "water-heater-buying-guide-tank-vs-tankless-south-florida",
+    title: "What Is GEO? A Business Owner's Guide to Generative Engine Optimization",
+    slug: "what-is-geo-generative-engine-optimization-guide",
     type: "blog",
     status: "published",
-    body: `# Water Heater Buying Guide: Tank vs. Tankless in South Florida
+    body: `# What Is GEO? A Business Owner's Guide to Generative Engine Optimization
 
-Choosing the right water heater for your South Florida home is a big decision. Let's break down the pros and cons of tank and tankless systems.
+You've heard of SEO. But have you heard of **GEO**?
 
-## Tank Water Heaters
+GEO — Generative Engine Optimization — is the practice of optimizing your brand's digital presence so that AI-powered search engines (ChatGPT, Google Gemini, Perplexity, Grok, Claude) can find, understand, and **recommend** your business.
 
-**Pros:**
-- Lower upfront cost ($800–$1,500 installed)
-- Simple installation and maintenance
-- Works well for homes with consistent hot water usage
+## How GEO Is Different from SEO
 
-**Cons:**
-- Higher monthly energy bills
-- Takes up more space
-- 10–15 year lifespan
+| | SEO | GEO |
+|---|---|---|
+| **Goal** | Rank on Google Search results page | Get cited and recommended by AI engines |
+| **Target** | Google's ranking algorithm | LLMs (Large Language Models) |
+| **Signals** | Keywords, backlinks, page speed | Structured data, entity clarity, authority |
+| **Output** | Blue link on page 1 | AI mentions your business by name |
+| **Timeline** | 3-6 months for results | Can see changes within weeks |
 
-## Tankless Water Heaters
+## Why GEO Matters Now
 
-**Pros:**
-- Energy efficient — heats water on demand
-- Compact, wall-mounted design
-- 20+ year lifespan
-- Unlimited hot water
+AI search isn't coming — it's here. When someone asks Perplexity "Who's the best HVAC company in Fort Lauderdale?", the AI synthesizes information from across the web and delivers a direct answer. No clicking through 10 blue links.
 
-**Cons:**
-- Higher upfront cost ($2,000–$4,500 installed)
-- May require electrical or gas line upgrades
-- Flow rate limitations with multiple simultaneous uses
+If your business has:
+- Strong structured data (JSON-LD schema markup)
+- Consistent NAP citations across directories
+- An llms.txt file telling AI how to reference you
+- Authority mentions in trusted sources
 
-## South Florida Considerations
+...then AI will cite you by name. If you don't have these signals, you're invisible.
 
-Our warm climate actually gives tankless heaters an advantage — the incoming water temperature is already warmer, so the unit works less to heat it. This means even better energy savings compared to northern states.
+## The GEO Framework
 
-## Our Recommendation
+### 1. Scan — See What AI Sees
+We query multiple AI engines with prompts relevant to your business and market. "Best plumber in Miami", "top-rated dentist near Coral Gables", etc. We record whether you're mentioned, how you're described, and how you compare to competitors.
 
-For most Miami homes, we recommend a **tankless water heater** for long-term savings and reliability. The higher upfront cost pays for itself within 5–7 years through energy savings.
+### 2. Analyze — Find the Gaps
+We identify which signals are strong, which are weak, and which are missing entirely. Common gaps include:
+- No JSON-LD schema markup
+- Missing or inconsistent business citations
+- No llms.txt or agent.json files
+- Thin content that doesn't demonstrate expertise
+
+### 3. Optimize — Fix What Matters
+We prioritize fixes based on impact. Structured data and citation consistency usually move the needle fastest. Content optimization and authority building are ongoing.
+
+### 4. Monitor — Track Changes
+AI visibility changes weekly as models update. We run continuous scans to ensure your visibility is growing, not shrinking.
 
 ---
 
-**Ready to upgrade?** Call Sunshine Plumbing at (305) 555-1234 for a free water heater consultation.`,
+**Ready to see how AI engines perceive your brand?** [Get your free AI visibility scan](/contact) — it takes 2 minutes to start.`,
     excerpt:
-      "Choosing the right water heater for your South Florida home is a big decision. Let's break down the pros and cons.",
-    author: "Sunshine Plumbing Team",
-    tags: ["water-heater", "south-florida", "buying-guide"],
+      "GEO (Generative Engine Optimization) is how you get AI engines like ChatGPT and Perplexity to recommend your business. Here's what you need to know.",
+    author: "GEOPlusMarketing Team",
+    tags: ["geo", "ai-search", "structured-data"],
     published_at: "2026-02-22T10:00:00Z",
     created_at: "2026-02-21T08:00:00Z",
   },
   {
     id: "content_003",
     business_id: "biz_001",
-    title: "How to Prevent Drain Clogs: A Miami Homeowner's Guide",
-    slug: "how-to-prevent-drain-clogs-miami-homeowners-guide",
+    title: "5 Signs Your Business Is Invisible to AI Search Engines",
+    slug: "5-signs-your-business-is-invisible-to-ai-search",
     type: "blog",
     status: "published",
-    body: `# How to Prevent Drain Clogs: A Miami Homeowner's Guide
+    body: `# 5 Signs Your Business Is Invisible to AI Search Engines
 
-Drain clogs are one of the most common plumbing issues we see. The good news? Most clogs are preventable with a few simple habits.
+You might rank #1 on Google and still be completely invisible to ChatGPT, Perplexity, and Google's AI Overviews. Here's how to tell.
 
-## Kitchen Drains
+## 1. No Structured Data on Your Website
 
-- **Never pour grease down the drain.** Let it cool and dispose of it in the trash.
-- Use a drain strainer to catch food particles.
-- Run hot water for 30 seconds after using the disposal.
+Check your website's source code. If you don't see JSON-LD schema markup (those \`<script type="application/ld+json">\` tags), AI engines have a much harder time understanding what your business does, where you're located, and what services you offer.
 
-## Bathroom Drains
+**Fix:** Add LocalBusiness, Service, and FAQ schema markup to every page.
 
-- Install hair catchers in showers and tubs.
-- Clean pop-up stoppers in sinks monthly.
-- Avoid flushing anything other than toilet paper.
+## 2. You Don't Have an llms.txt File
 
-## Outdoor Drains
+Just like robots.txt tells search crawlers how to index your site, **llms.txt** tells AI models how to reference your business. If you don't have one, you're leaving it up to chance.
 
-Miami's tropical vegetation can clog outdoor drains with leaves and debris. Keep drains clear, especially before hurricane season.
+**Fix:** Create an llms.txt file at your domain root with your business name, services, location, and preferred citation format.
 
-## When to Call a Professional
+## 3. Inconsistent Business Citations
 
-If you notice slow drains in multiple fixtures, or if plunging doesn't resolve the issue, it's time to call a professional. This could indicate a deeper issue in your main sewer line.
+If your business name, address, and phone number (NAP) are different across Google Business Profile, Yelp, BBB, and industry directories, AI engines get confused about which information is correct.
+
+**Fix:** Audit all your citations and ensure 100% NAP consistency.
+
+## 4. Thin Content Without Expertise Signals
+
+AI engines favor content that demonstrates genuine expertise — specific data points, case studies, original insights. If your blog is generic fluff, AI won't cite it.
+
+**Fix:** Create authoritative content with specific examples, statistics, and real-world case studies from your market.
+
+## 5. You've Never Tested It
+
+The simplest sign: have you ever asked ChatGPT, Perplexity, or Google Gemini about your type of service in your city? If you haven't, you don't know what they're telling potential customers.
+
+**Fix:** Try it right now. Ask "Who's the best [your service] in [your city]?" across multiple AI engines. If you're not mentioned, you have work to do.
 
 ---
 
-**Need help with a stubborn clog?** Sunshine Plumbing has the tools and expertise to clear any drain. Call (305) 555-1234.`,
+**Want a comprehensive analysis?** Our [free AI visibility scan](/contact) checks your brand across every major AI engine and gives you a prioritized action plan.`,
     excerpt:
-      "Drain clogs are one of the most common plumbing issues. Most clogs are preventable with a few simple habits.",
-    author: "Sunshine Plumbing Team",
-    tags: ["drain-cleaning", "plumbing-tips", "miami"],
+      "You might rank #1 on Google and still be completely invisible to ChatGPT and Perplexity. Here are 5 warning signs.",
+    author: "GEOPlusMarketing Team",
+    tags: ["ai-visibility", "geo", "diagnostics"],
     published_at: "2026-03-01T10:00:00Z",
     created_at: "2026-02-28T08:00:00Z",
   },
   {
     id: "content_004",
     business_id: "biz_001",
-    title: "Spring Plumbing Checklist for Miami Homes",
-    slug: "spring-plumbing-checklist-miami-homes",
+    title: "The ROI of AI Search Visibility: What the Data Shows",
+    slug: "roi-of-ai-search-visibility-what-data-shows",
     type: "blog",
     status: "draft",
-    body: `# Spring Plumbing Checklist for Miami Homes
+    body: `# The ROI of AI Search Visibility: What the Data Shows
 
-Spring is the perfect time to give your plumbing system a checkup before the intense summer heat and hurricane season arrive.
+Is investing in AI search visibility worth it? Let's look at the numbers.
 
-## Indoor Checklist
+## The Shifting Search Landscape
 
-- [ ] Check all faucets for drips or leaks
-- [ ] Test water heater temperature (should be 120°F)
-- [ ] Inspect washing machine hoses for bulges or cracks
-- [ ] Clean showerheads with vinegar to remove mineral buildup
-- [ ] Test all toilets for running water or phantom flushes
+McKinsey projects that **$750 billion in US revenue** is at risk from AI-driven search disruption by 2028. That's not a hypothetical — it's already happening.
 
-## Outdoor Checklist
+Businesses that get ahead of this shift are seeing:
+- Higher quality leads (AI-referred visitors have stronger intent)
+- Lower customer acquisition costs (AI citations are free — no ad spend)
+- Compounding authority (once AI trusts your brand, it keeps citing you)
 
-- [ ] Inspect outdoor faucets and hose bibs
-- [ ] Clear debris from outdoor drains and gutters
-- [ ] Check sprinkler system for leaks or broken heads
-- [ ] Inspect visible pipes for corrosion
+## What GEO Clients Typically See
 
-## Hurricane Prep
+Within the first 90 days of implementing a full GEO strategy:
+- **2-3x increase** in AI mentions across major engines
+- **35-50% more** inbound inquiries from AI-referred traffic
+- **Higher close rates** on AI-sourced leads vs. traditional channels
 
-- Know where your main water shutoff valve is
-- Consider installing a sump pump if you don't have one
-- Have a plumber inspect your backflow preventer
+## The Cost of Waiting
+
+Every month you delay, your competitors are building their AI authority. Once an AI engine learns to recommend a competitor for your service category, displacing them gets harder — not easier. This is a first-mover market.
 
 ---
 
-**Schedule your spring plumbing inspection today.** Call Sunshine Plumbing at (305) 555-1234.`,
+**See where you stand today.** [Get your free AI visibility scan](/contact).`,
     excerpt:
-      "Spring is the perfect time to give your plumbing system a checkup before summer heat and hurricane season.",
-    author: "Sunshine Plumbing Team",
-    tags: ["plumbing-maintenance", "miami", "spring-checklist"],
+      "McKinsey projects $750B in US revenue at risk from AI search disruption. Here's what investing in AI visibility actually returns.",
+    author: "GEOPlusMarketing Team",
+    tags: ["roi", "ai-search", "business-case"],
     published_at: null,
     created_at: "2026-03-03T08:00:00Z",
   },
@@ -356,14 +388,14 @@ export const demoCampaigns: Campaign[] = [
   {
     id: "camp_001",
     business_id: "biz_001",
-    name: "Miami Emergency Plumbing SEO",
+    name: "AI Visibility Awareness — Miami",
     type: "seo",
     status: "active",
-    budget: 2500,
-    spent: 1875,
-    leads_generated: 23,
-    impressions: 45200,
-    clicks: 1890,
+    budget: 3500,
+    spent: 2100,
+    leads_generated: 18,
+    impressions: 52000,
+    clicks: 2340,
     start_date: "2026-01-15T00:00:00Z",
     end_date: null,
     created_at: "2026-01-14T10:00:00Z",
@@ -371,14 +403,14 @@ export const demoCampaigns: Campaign[] = [
   {
     id: "camp_002",
     business_id: "biz_001",
-    name: "South Florida Water Heater Social",
+    name: "GEO Education Content — LinkedIn",
     type: "social",
     status: "active",
-    budget: 1200,
-    spent: 680,
-    leads_generated: 8,
-    impressions: 28500,
-    clicks: 945,
+    budget: 1500,
+    spent: 820,
+    leads_generated: 7,
+    impressions: 34000,
+    clicks: 1120,
     start_date: "2026-02-01T00:00:00Z",
     end_date: "2026-04-30T00:00:00Z",
     created_at: "2026-01-30T10:00:00Z",
@@ -388,12 +420,12 @@ export const demoCampaigns: Campaign[] = [
 // --- Demo Dashboard Stats ---
 
 export const demoDashboardStats: DashboardStats = {
-  total_leads: 47,
-  leads_this_month: 12,
+  total_leads: 42,
+  leads_this_month: 11,
   total_content: 4,
   published_content: 3,
   active_campaigns: 2,
-  total_revenue: 34500,
-  conversion_rate: 18.5,
-  avg_lead_value: 734,
+  total_revenue: 28500,
+  conversion_rate: 22.5,
+  avg_lead_value: 1850,
 };

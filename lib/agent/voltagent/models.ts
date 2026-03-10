@@ -1,13 +1,13 @@
-import { openai } from "@ai-sdk/openai";
+import { anthropic } from "@ai-sdk/anthropic";
 import { xai } from "@ai-sdk/xai";
 
-// GPT-4o — primary content generation LLM
-export const contentModel = openai("gpt-4o");
+// Claude Opus 4.5 — primary content generation & agent brain
+export const contentModel = anthropic("claude-opus-4-5-20250219");
 
-// GPT-4o-mini — cheaper model for simple tasks
-export const lightModel = openai("gpt-4o-mini");
+// Claude Sonnet — lighter model for simple tasks
+export const lightModel = anthropic("claude-sonnet-4-5-20250514");
 
-// Grok 4.1 — research & scraping intelligence
+// Grok — research & scraping intelligence
 export const researchModel = xai("grok-3-mini-fast");
 
 // Note: Gemini image gen uses @google/genai directly (not Vercel AI SDK)

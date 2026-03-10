@@ -17,8 +17,8 @@ export function getConfig() {
       webhookSecret: optionalEnv("TELEGRAM_WEBHOOK_SECRET"),
       webhookUrl: optionalEnv("TELEGRAM_WEBHOOK_URL"),
     },
-    openai: {
-      apiKey: optionalEnv("OPENAI_API_KEY"),
+    anthropic: {
+      apiKey: optionalEnv("ANTHROPIC_API_KEY"),
     },
     supabase: {
       url: optionalEnv("SUPABASE_URL"),
@@ -30,6 +30,14 @@ export function getConfig() {
     },
     google: {
       apiKey: optionalEnv("GOOGLE_API_KEY"),
+    },
+    ghl: {
+      pit: optionalEnv("GHL_PIT"),
+      locationId: optionalEnv("GHL_LOCATION_ID"),
+      apiBase: optionalEnv(
+        "GHL_API_BASE",
+        "https://services.leadconnectorhq.com"
+      ),
     },
     gptResearcher: {
       url: optionalEnv("GPT_RESEARCHER_URL", "http://localhost:8000"),

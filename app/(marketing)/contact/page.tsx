@@ -1,9 +1,9 @@
 import { LeadForm } from "@/components/contact/lead-form";
 
 export const metadata = {
-  title: "Contact Us | GEOPlusMarketing",
+  title: "Get Your Free AI Visibility Scan | GEOPlusMarketing",
   description:
-    "Get a free marketing consultation. Tell us about your business and we'll show you how to dominate your local market.",
+    "Find out how AI search engines see your brand. Get a free scan showing your visibility across ChatGPT, Perplexity, Google AI, and more.",
 };
 
 export default function ContactPage() {
@@ -12,14 +12,15 @@ export default function ContactPage() {
       <div className="mx-auto max-w-3xl px-6">
         <div className="text-center">
           <p className="text-sm font-bold uppercase tracking-widest text-accent">
-            Get Started
+            Free AI Visibility Scan
           </p>
           <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl md:text-5xl">
-            Let&apos;s Grow Your Business
+            Find Out If AI Can Find&nbsp;You
           </h1>
           <p className="mt-4 text-lg leading-relaxed text-muted">
-            Fill out the form below and our team will reach out within 24 hours
-            with a free, personalized growth strategy.
+            Tell us about your business and we&apos;ll scan your brand across
+            every major AI engine. You&apos;ll get a real visibility score and
+            a prioritized action plan within 24 hours.
           </p>
         </div>
 

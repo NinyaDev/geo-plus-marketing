@@ -5,13 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input, Textarea, Select } from "@/components/ui/input";
 
 const serviceOptions = [
-  { value: "emergency-plumbing", label: "Emergency Plumbing" },
-  { value: "water-heater", label: "Water Heater Installation" },
-  { value: "drain-cleaning", label: "Drain Cleaning" },
-  { value: "pipe-repair", label: "Pipe Repair" },
-  { value: "bathroom-remodeling", label: "Bathroom Remodeling" },
-  { value: "seo", label: "SEO Services" },
-  { value: "marketing", label: "Marketing Automation" },
+  { value: "ai-visibility-scan", label: "AI Visibility Scan" },
+  { value: "schema-structured-data", label: "Schema & Structured Data" },
+  { value: "content-optimization", label: "Content Optimization" },
+  { value: "ai-monitoring", label: "Ongoing AI Monitoring" },
+  { value: "full-geo-package", label: "Full GEO Package" },
   { value: "other", label: "Other" },
 ];
 
@@ -156,7 +154,7 @@ export function LeadForm() {
       )}
 
       <Button type="submit" size="lg" disabled={status === "loading"} className="w-full">
-        {status === "loading" ? "Submitting..." : "Get Your Free Consultation"}
+        {status === "loading" ? "Submitting..." : "Get Your Free AI Visibility Scan"}
       </Button>
     </form>
   );

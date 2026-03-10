@@ -11,7 +11,7 @@
     "webhook:info": "tsx -e \"fetch('https://api.telegram.org/bot'+process.env.TELEGRAM_BOT_TOKEN+'/getWebhookInfo').then(r=>r.json()).then(console.log)\""
   },
   "dependencies": {
-    "@ai-sdk/openai": "^3.0.39",
+    "@ai-sdk/anthropic": "^3.0.58",
     "@ai-sdk/xai": "^3.0.64",
     "@google/genai": "^1.43.0",
     "@supabase/supabase-js": "^2.98.0",
