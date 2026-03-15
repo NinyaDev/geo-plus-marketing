@@ -1,5 +1,5 @@
 import { generateText, stepCountIs } from "ai";
-import { contentModel } from "../models";
+import { agentModel } from "../models";
 import { allTools } from "../tools";
 import { trackTokenUsage } from "../guards";
 
@@ -58,9 +58,9 @@ IMPORTANT — telegramUserId:
 The current user's Telegram ID is: {{TELEGRAM_USER_ID}}
 Use this value for ANY tool call that requires telegramUserId. NEVER ask the user for their Telegram ID.`;
 
-// Sonnet 4.6 pricing per million tokens
-const COST_PER_M_INPUT = 3.0;
-const COST_PER_M_OUTPUT = 15.0;
+// Haiku 4.5 pricing per million tokens
+const COST_PER_M_INPUT = 0.8;
+const COST_PER_M_OUTPUT = 4.0;
 
 export interface MarketingAgentOptions {
   userId: string;
@@ -76,21 +76,25 @@ export async function runMarketingAgent(
     options.userId
   );
 
+  // Keep history short to stay under rate limits
+  const recentHistory = (options.conversationHistory || []).slice(-6);
+
   const messages: Array<{
     role: "system" | "user" | "assistant";
     content: string;
   }> = [
     { role: "system", content: systemPrompt },
-    ...(options.conversationHistory || []),
+    ...recentHistory,
     { role: "user", content: message },
   ];
 
   const result = await generateText({
-    model: contentModel,
+    model: agentModel,
     messages,
     tools: allTools,
-    stopWhen: stepCountIs(3),
+    stopWhen: stepCountIs(2),
     toolChoice: "auto",
+    maxRetries: 0,
   });
 
   // Track token usage and log cost estimate

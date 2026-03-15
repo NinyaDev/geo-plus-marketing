@@ -22,27 +22,29 @@ export const prospectBusinessesTool = tool({
       .describe("Search radius"),
   }),
   execute: async (params) => {
-    const prompt = `You are a business prospecting analyst. Analyze the local market for ${params.serviceType} businesses in ${params.city}${params.zipCode ? ` (ZIP: ${params.zipCode})` : ""} within a ${params.radius} radius.
+    const prompt = `You are a business prospecting analyst. Find REAL ${params.serviceType} businesses in ${params.city}${params.zipCode ? ` (ZIP: ${params.zipCode})` : ""} within a ${params.radius} radius.
 
-Generate a realistic prospecting report with 5-8 fictional but plausible business prospects that match common patterns of businesses needing marketing help. For each prospect, provide:
+IMPORTANT: Only list businesses you are confident actually exist. Include their real website URL and phone number if you know them. If you are unsure about a business, mark it as "unverified". Do NOT invent fake businesses.
 
-1. **Business Name** — realistic local business name
-2. **Website Assessment** — rate their website (1-10): loading speed, mobile responsiveness, modern design, clear CTAs
-3. **GBP Assessment** — rate their Google Business Profile (1-10): review count, average rating, post frequency, completeness
-4. **SEO Assessment** — rate their search visibility (1-10): keyword rankings, local pack presence, organic traffic signals
-5. **Overall Quality Score** (1-10) — how good a prospect they are (higher = more likely to convert, i.e., they NEED help)
-6. **Key Weaknesses** — specific issues you identified
-7. **Recommended Approach** — how to pitch marketing services to them
+For each prospect, provide:
 
-Focus on identifying businesses that:
-- Have outdated or non-mobile-friendly websites
-- Have few Google reviews (<20)
-- Don't post on Google Business Profile
-- Have incomplete GBP listings
-- Are not ranking for key local keywords
-- Have no schema markup or structured data
+1. **Business Name** — the real business name
+2. **Website URL** — their actual website (or "unknown" if you don't know it)
+3. **Phone** — their real phone number (or "unknown")
+4. **Website Assessment** — rate their likely online presence (1-10)
+5. **GBP Assessment** — rate their Google Business Profile (1-10): review count, completeness
+6. **Overall Quality Score** (1-10) — how good a prospect they are (higher = they NEED marketing help)
+7. **Key Weaknesses** — specific issues or likely gaps in their online presence
+8. **Recommended Approach** — how to pitch AI search visibility services to them
+9. **Verified** — true if you are confident this business exists, false if uncertain
 
-Format as JSON array with fields: name, website_assessment, gbp_assessment, seo_assessment, quality_score, weaknesses, recommended_approach, estimated_city`;
+Focus on identifying businesses that likely:
+- Have outdated or basic websites
+- Have few Google reviews
+- Are not ranking well for local keywords
+- Would benefit from AI search visibility
+
+Return 5-8 prospects. Format as JSON array with fields: name, website_url, phone, website_assessment, gbp_assessment, quality_score, weaknesses, recommended_approach, estimated_city, verified`;
 
     const result = await generateText({
       model: researchModel,
@@ -52,10 +54,13 @@ Format as JSON array with fields: name, website_assessment, gbp_assessment, seo_
     // Parse prospects from response
     let prospects: Array<{
       name: string;
+      website_url?: string;
+      phone?: string;
       quality_score: number;
       weaknesses: string;
       recommended_approach: string;
       estimated_city: string;
+      verified?: boolean;
     }> = [];
 
     try {
@@ -96,9 +101,12 @@ Format as JSON array with fields: name, website_assessment, gbp_assessment, seo_
       prospectsFound: prospects.length,
       prospects: prospects.map((p) => ({
         name: p.name,
+        websiteUrl: p.website_url || "unknown",
+        phone: p.phone || "unknown",
         qualityScore: p.quality_score,
         weaknesses: p.weaknesses,
         approach: p.recommended_approach,
+        verified: p.verified ?? false,
       })),
     };
   },

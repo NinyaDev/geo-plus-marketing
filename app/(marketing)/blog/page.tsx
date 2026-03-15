@@ -3,6 +3,8 @@ import { getContent } from "@/lib/data";
 import { ContentCard } from "@/components/blog/content-card";
 import { ContentFilter } from "@/components/blog/content-filter";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Blog | GEOPlusMarketing",
   description:

@@ -5,6 +5,8 @@ import { CampaignStatus } from "@/components/dashboard/campaign-status";
 import { getDashboardStats, getLeads, getContent, getCampaigns } from "@/lib/data";
 import { formatCurrency } from "@/lib/utils/format";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Dashboard | GEOPlusMarketing",
 };

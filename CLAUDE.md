@@ -9,7 +9,7 @@ GEOPlusMarketing — AI-powered Sales Hub for franchisees reselling AI Search Vi
 
 ## Architecture
 - Next.js 16 App Router, route groups: (marketing) public, (dashboard) admin
-- Vercel AI SDK v6 — Claude Sonnet 4.6 (`claude-sonnet-4-6`) as agent brain
+- Vercel AI SDK v6 — Haiku 4.5 as agent brain (tool routing), Sonnet 4.6 for content generation inside tools
 - Grok/xAI for research, Google Gemini for images
 - Supabase PostgreSQL (6 tables), GoHighLevel CRM, Telegraf Telegram bot
 - 15 AI tools in `lib/agent/voltagent/tools/` (lead management is core, content tools are supplementary)
@@ -24,7 +24,7 @@ GEOPlusMarketing — AI-powered Sales Hub for franchisees reselling AI Search Vi
 ## Key Files
 - `lib/agent/voltagent/agents/marketing.ts` — agent system prompt + generateText loop
 - `lib/agent/voltagent/models.ts` — LLM config (anthropic, xai)
-- `lib/agent/voltagent/tools/index.ts` — all 14 tool exports
+- `lib/agent/voltagent/tools/index.ts` — all 16 tool exports
 - `lib/agent/context.ts` — persistent conversation memory (Supabase + fallback)
 - `lib/ghl/client.ts` — GoHighLevel CRM integration
 - `lib/config.ts` — env config

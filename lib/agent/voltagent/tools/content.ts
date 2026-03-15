@@ -56,6 +56,10 @@ Format the output in Markdown.`;
       const supabase = getSupabaseAdmin();
       const title = `${params.service} in ${params.city} — ${params.contentType === "blog_post" ? "Blog Post" : "Landing Page"}`;
 
+      // Extract first paragraph as excerpt
+      const excerptMatch = content.replace(/^#.*\n+/, "").trim();
+      const excerpt = excerptMatch.split("\n\n")[0]?.replace(/[#*_`]/g, "").slice(0, 200) || "";
+
       const { data } = await supabase
         .from("content")
         .insert({
@@ -64,6 +68,9 @@ Format the output in Markdown.`;
           title,
           slug: generateSlug(title),
           body: content,
+          excerpt,
+          author: "GEOPlusMarketing",
+          tags: [params.service.toLowerCase(), params.city.toLowerCase(), "geo"],
           target_keyword: `${params.service} in ${params.city}`,
           target_city: params.city,
           target_service: params.service,
