@@ -16,6 +16,24 @@ const statusVariant: Record<string, "default" | "success" | "warning" | "info"> 
 export function ContentList({ content: initialContent }: { content: ContentPiece[] }) {
   const [content, setContent] = useState(initialContent);
   const [publishing, setPublishing] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  async function handleDelete(id: string) {
+    if (!confirm("Delete this content?")) return;
+    setDeleting(id);
+    try {
+      const res = await fetch(`/api/content?id=${encodeURIComponent(id)}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        setContent((prev) => prev.filter((item) => item.id !== id));
+      }
+    } catch {
+      // Silently fail — button will re-enable
+    } finally {
+      setDeleting(null);
+    }
+  }
 
   async function handlePublish(id: string) {
     setPublishing(id);
@@ -82,6 +100,15 @@ export function ContentList({ content: initialContent }: { content: ContentPiece
                 >
                   {item.status}
                 </Badge>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="text-slate-400 hover:text-red-600"
+                  disabled={deleting === item.id}
+                  onClick={() => handleDelete(item.id)}
+                >
+                  {deleting === item.id ? "..." : "Delete"}
+                </Button>
               </div>
             </div>
           ))}

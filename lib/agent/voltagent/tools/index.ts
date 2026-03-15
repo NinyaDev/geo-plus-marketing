@@ -3,6 +3,7 @@ import { generateGeoContentTool } from "./content";
 import { createSocialPostTool } from "./social-post";
 import { draftReviewResponseTool } from "./review-response";
 import { addLeadTool } from "./lead";
+import { getLeadsTool } from "./get-leads";
 import { generateLeadReportTool } from "./lead-report";
 import { generateLandingPageTool } from "./landing-page";
 import { prospectBusinessesTool } from "./prospect";
@@ -20,6 +21,7 @@ export const allTools = {
   create_social_post: createSocialPostTool,
   draft_review_response: draftReviewResponseTool,
   add_lead: addLeadTool,
+  get_leads: getLeadsTool,
   generate_lead_report: generateLeadReportTool,
   generate_landing_page: generateLandingPageTool,
   prospect_businesses: prospectBusinessesTool,

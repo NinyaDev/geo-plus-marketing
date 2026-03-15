@@ -1,10 +1,11 @@
 import { tool } from "ai";
 import { z } from "zod";
 import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/client";
+import { isGhlConfigured, syncContactToGhl, addNoteToContact } from "@/lib/ghl/client";
 
 export const addLeadTool = tool({
   description:
-    "Add a new lead (potential customer) to the database. Use when a user reports a new lead or wants to track a potential client.",
+    "Add a new lead (potential customer) to the database and sync to GoHighLevel CRM. Use when a user reports a new lead or wants to track a potential client.",
   inputSchema: z.object({
     businessId: z.string().describe("Business ID this lead belongs to"),
     source: z
@@ -51,6 +52,44 @@ export const addLeadTool = tool({
       .single();
 
     if (error) return { success: false, error: error.message };
-    return { success: true, lead: data };
+
+    // Sync to GoHighLevel CRM
+    let ghlContactId: string | undefined;
+    if (isGhlConfigured() && params.email) {
+      const nameParts = (params.name || "").split(" ");
+      const firstName = nameParts[0] || "Unknown";
+      const lastName = nameParts.slice(1).join(" ") || undefined;
+
+      const ghlResult = await syncContactToGhl({
+        firstName,
+        lastName,
+        email: params.email,
+        phone: params.phone,
+        source: "GEOPlusMarketing Bot",
+        tags: ["geoplus-lead", "bot-added", params.source],
+      });
+
+      if (ghlResult.success && ghlResult.contactId) {
+        ghlContactId = ghlResult.contactId;
+
+        // Add context note
+        const noteLines = [
+          `Lead added via bot (source: ${params.source})`,
+          params.serviceRequested ? `Service requested: ${params.serviceRequested}` : null,
+          params.city ? `City: ${params.city}` : null,
+          params.notes ? `Notes: ${params.notes}` : null,
+          params.qualityScore ? `Quality score: ${params.qualityScore}/10` : null,
+        ].filter(Boolean).join("\n");
+
+        await addNoteToContact(ghlResult.contactId, noteLines);
+      }
+    }
+
+    return {
+      success: true,
+      lead: data,
+      ghlContactId,
+      ghlSynced: !!ghlContactId,
+    };
   },
 });

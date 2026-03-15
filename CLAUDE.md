@@ -1,6 +1,6 @@
 # Project Context
 
-GEOPlusMarketing — AI-powered marketing and sales hub for franchisees reselling AI Search Visibility (GEO) services to local businesses. Deployed on Vercel under Utlyze org (utlyze-2f74afdb). Project lead: James Brady.
+GEOPlusMarketing — AI-powered Sales Hub for franchisees reselling AI Search Visibility (GEO) services to local businesses. Core flow: website educates prospects → contact form captures leads into GHL → franchisee manages leads and generates content via Telegram bot → dashboard gives read-only overview. Lead capture and GHL sync are the core features; content generation is supplementary. Deployed on Vercel under Utlyze org (utlyze-2f74afdb). Project lead: James Brady.
 
 ## Rules
 - Never add "Co-Authored-By" Claude/Anthropic lines to git commits
@@ -12,7 +12,7 @@ GEOPlusMarketing — AI-powered marketing and sales hub for franchisees resellin
 - Vercel AI SDK v6 — Claude Sonnet 4.6 (`claude-sonnet-4-6`) as agent brain
 - Grok/xAI for research, Google Gemini for images
 - Supabase PostgreSQL (6 tables), GoHighLevel CRM, Telegraf Telegram bot
-- 14 AI tools in `lib/agent/voltagent/tools/`
+- 15 AI tools in `lib/agent/voltagent/tools/` (lead management is core, content tools are supplementary)
 
 ## AI SDK v6 Gotchas
 - `tool()` uses `inputSchema` not `parameters`
@@ -32,4 +32,4 @@ GEOPlusMarketing — AI-powered marketing and sales hub for franchisees resellin
 
 ## Two User Types
 - **Customers** (local businesses) → website: landing pages, blog, contact form
-- **Franchisees** (operators) → Telegram bot: content generation, lead prospecting, campaigns
+- **Franchisees** (operators) → Telegram bot: lead management (add/list/report), GHL sync, content generation, prospecting

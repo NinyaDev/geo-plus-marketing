@@ -19,6 +19,29 @@ function generateSlug(title: string): string {
     .slice(0, 120);
 }
 
+export async function DELETE(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get("id");
+
+  if (!id) {
+    return NextResponse.json({ error: "id is required" }, { status: 400 });
+  }
+
+  // Demo data — just acknowledge
+  if (id.startsWith("content_") || !isSupabaseConfigured()) {
+    return NextResponse.json({ success: true });
+  }
+
+  const supabase = getSupabaseAdmin();
+  const { error } = await supabase.from("content").delete().eq("id", id);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true });
+}
+
 export async function PATCH(request: Request) {
   const body = await request.json();
   const { id, status } = body;

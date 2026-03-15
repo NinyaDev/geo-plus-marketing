@@ -84,16 +84,17 @@ export function registerBotHandlers(bot: Telegraf): void {
         `/help — This help message\n` +
         `/status — Agent status & loaded tools\n\n` +
         `What I can do (just ask in natural language):\n\n` +
+        `Lead Management (Core)\n` +
+        `- Add leads and auto-sync to GoHighLevel CRM\n` +
+        `- View leads by status: "Show my leads"\n` +
+        `- Generate lead reports\n` +
+        `- Prospect local businesses with quality scoring\n\n` +
         `Content Creation\n` +
         `- Generate geo-targeted blog posts\n` +
         `- Create social media posts (GBP, Instagram, Facebook)\n` +
         `- Draft review responses\n` +
         `- Generate landing pages with schema markup\n` +
         `- List drafts and publish content\n\n` +
-        `Lead Generation\n` +
-        `- Prospect local businesses with quality scoring\n` +
-        `- Track and manage leads\n` +
-        `- Generate lead reports\n\n` +
         `Images & Assets\n` +
         `- Create CTA advertising visuals\n` +
         `- Generate JSON-LD structured data\n\n` +
@@ -108,8 +109,7 @@ export function registerBotHandlers(bot: Telegraf): void {
     const status = getStatus();
     await ctx.reply(
       `GEOPlusMarketing Agent Status\n\n` +
-        `Tools loaded: ${status.skills.length}\n` +
-        `• ${status.skills.join("\n• ")}\n\n` +
+        `Tools loaded: ${status.tools}\n` +
         `Uptime: ${Math.floor(status.uptime)}s`
     );
   });

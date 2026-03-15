@@ -1,10 +1,10 @@
 import Link from "next/link";
 
 const navItems = [
-  { label: "Overview", href: "/dashboard", icon: BarChartIcon },
-  { label: "Leads", href: "/dashboard#leads", icon: UsersIcon },
-  { label: "Content", href: "/dashboard#content", icon: FileTextIcon },
-  { label: "Campaigns", href: "/dashboard#campaigns", icon: MegaphoneIcon },
+  { label: "Overview", href: "/dashboard", icon: BarChartIcon, isHash: false },
+  { label: "Leads", href: "#leads", icon: UsersIcon, isHash: true },
+  { label: "Content", href: "#content", icon: FileTextIcon, isHash: true },
+  { label: "Campaigns", href: "#campaigns", icon: MegaphoneIcon, isHash: true },
 ];
 
 export function DashboardSidebar() {
@@ -16,16 +16,27 @@ export function DashboardSidebar() {
         </Link>
       </div>
       <nav className="flex flex-col gap-1 p-4">
-        {navItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
-          >
-            <item.icon className="h-5 w-5" />
-            {item.label}
-          </Link>
-        ))}
+        {navItems.map((item) =>
+          item.isHash ? (
+            <a
+              key={item.href}
+              href={item.href}
+              className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+            >
+              <item.icon className="h-5 w-5" />
+              {item.label}
+            </a>
+          ) : (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+            >
+              <item.icon className="h-5 w-5" />
+              {item.label}
+            </Link>
+          )
+        )}
       </nav>
       <div className="mt-auto border-t border-slate-200 p-4">
         <Link
