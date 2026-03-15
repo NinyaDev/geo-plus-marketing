@@ -88,30 +88,49 @@ export async function runMarketingAgent(
     { role: "user", content: message },
   ];
 
-  const result = await generateText({
-    model: agentModel,
-    messages,
-    tools: allTools,
-    stopWhen: stepCountIs(2),
-    toolChoice: "auto",
-    maxRetries: 0,
-  });
+  // Retry once on rate limit with a 60s cooldown
+  let lastError: Error | null = null;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const result = await generateText({
+        model: agentModel,
+        messages,
+        tools: allTools,
+        stopWhen: stepCountIs(2),
+        toolChoice: "auto",
+        maxRetries: 0,
+      });
 
-  // Track token usage and log cost estimate
-  const usage = result.usage;
-  if (usage) {
-    const inTokens = usage.inputTokens ?? 0;
-    const outTokens = usage.outputTokens ?? 0;
-    const inputCost = (inTokens / 1_000_000) * COST_PER_M_INPUT;
-    const outputCost = (outTokens / 1_000_000) * COST_PER_M_OUTPUT;
-    const totalCost = inputCost + outputCost;
+      // Track token usage and log cost estimate
+      const usage = result.usage;
+      if (usage) {
+        const inTokens = usage.inputTokens ?? 0;
+        const outTokens = usage.outputTokens ?? 0;
+        const inputCost = (inTokens / 1_000_000) * COST_PER_M_INPUT;
+        const outputCost = (outTokens / 1_000_000) * COST_PER_M_OUTPUT;
+        const totalCost = inputCost + outputCost;
 
-    trackTokenUsage(options.userId, inTokens, outTokens);
+        trackTokenUsage(options.userId, inTokens, outTokens);
 
-    console.log(
-      `[Cost] user=${options.userId} in=${inTokens} out=${outTokens} steps=${result.steps?.length ?? 1} est=$${totalCost.toFixed(4)}`
-    );
+        console.log(
+          `[Cost] user=${options.userId} in=${inTokens} out=${outTokens} steps=${result.steps?.length ?? 1} est=$${totalCost.toFixed(4)}`
+        );
+      }
+
+      return result.text || "I processed your request but have no text response. Please try again.";
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
+      const isRateLimit = lastError.message.includes("rate limit") || lastError.message.includes("429");
+
+      if (isRateLimit && attempt === 0) {
+        console.log(`[RateLimit] Waiting 60s before retry for user=${options.userId}`);
+        await new Promise((resolve) => setTimeout(resolve, 60_000));
+        continue;
+      }
+
+      throw lastError;
+    }
   }
 
-  return result.text || "I processed your request but have no text response. Please try again.";
+  throw lastError || new Error("Agent failed unexpectedly");
 }

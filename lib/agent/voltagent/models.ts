@@ -1,11 +1,10 @@
 import { anthropic } from "@ai-sdk/anthropic";
 import { xai } from "@ai-sdk/xai";
 
-// Claude Haiku 4.5 — agent brain for tool routing (fast, high rate limits)
+// Claude Haiku 4.5 — all Anthropic usage on Haiku for maximum rate limits + lowest cost
+// Agent brain (tool routing) and content generation both use this model
 export const agentModel = anthropic("claude-haiku-4-5-20251001");
-
-// Claude Sonnet 4.6 — high-quality content generation inside tools
-export const contentModel = anthropic("claude-sonnet-4-6");
+export const contentModel = agentModel;
 
 // Grok — research & scraping intelligence
 export const researchModel = xai("grok-3-mini-fast");

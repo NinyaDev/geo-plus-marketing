@@ -9,7 +9,7 @@ GEOPlusMarketing — AI-powered Sales Hub for franchisees reselling AI Search Vi
 
 ## Architecture
 - Next.js 16 App Router, route groups: (marketing) public, (dashboard) admin
-- Vercel AI SDK v6 — Haiku 4.5 as agent brain (tool routing), Sonnet 4.6 for content generation inside tools
+- Vercel AI SDK v6 — Haiku 4.5 for all Anthropic calls (agent brain + content generation), Grok for research
 - Grok/xAI for research, Google Gemini for images
 - Supabase PostgreSQL (6 tables), GoHighLevel CRM, Telegraf Telegram bot
 - 15 AI tools in `lib/agent/voltagent/tools/` (lead management is core, content tools are supplementary)
