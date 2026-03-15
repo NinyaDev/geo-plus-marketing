@@ -4,6 +4,14 @@ import { z } from "zod";
 import { contentModel } from "../models";
 import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/client";
 
+function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 120);
+}
+
 export const generateGeoContentTool = tool({
   description:
     "Generate geo-targeted SEO content (blog post or landing page copy) for a local service business. Includes local landmarks, neighborhoods, FAQ, and CTAs.",
@@ -54,6 +62,7 @@ Format the output in Markdown.`;
           business_id: params.businessId,
           type: params.contentType,
           title,
+          slug: generateSlug(title),
           body: content,
           target_keyword: `${params.service} in ${params.city}`,
           target_city: params.city,

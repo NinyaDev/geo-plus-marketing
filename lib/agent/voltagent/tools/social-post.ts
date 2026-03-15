@@ -4,6 +4,14 @@ import { z } from "zod";
 import { contentModel } from "../models";
 import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/client";
 
+function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 120);
+}
+
 export const createSocialPostTool = tool({
   description:
     "Create a platform-specific social media post (Google Business Profile, Instagram, or Facebook) for a local service business.",
@@ -62,6 +70,7 @@ Make it geo-targeted to ${params.city} — mention local areas, seasonal relevan
         business_id: params.businessId,
         type: "social_post",
         title: `${params.platform.toUpperCase()} — ${params.postType} — ${params.service}`,
+        slug: generateSlug(`${params.platform} ${params.postType} ${params.service} ${params.city}`),
         body: post,
         target_city: params.city,
         target_service: params.service,
@@ -70,6 +79,42 @@ Make it geo-targeted to ${params.city} — mention local areas, seasonal relevan
       });
     }
 
-    return { success: true, platform: params.platform, post };
+    const postingInstructions: Record<string, string> = {
+      gbp: `How to post on Google Business Profile:
+1. Go to business.google.com and sign in
+2. Select the business profile
+3. Click "Add update" (or "Create post")
+4. Choose post type: Update, Offer, or Event
+5. Paste the content above
+6. Add a photo if available
+7. Set the CTA button type and link
+8. Click "Publish"
+
+Direct link: https://business.google.com`,
+      instagram: `How to post on Instagram:
+1. Open Instagram app or go to instagram.com
+2. Tap the + button to create a new post
+3. Select or upload an image (use the suggested image description above)
+4. Paste the caption from the content above
+5. Add location tag for ${params.city}
+6. Share to your feed
+
+Direct link: https://instagram.com`,
+      facebook: `How to post on Facebook:
+1. Go to your Facebook Business Page
+2. Click "Create post" at the top of the page
+3. Paste the content above
+4. Add a photo or link if suggested
+5. Click "Post"
+
+Direct link: https://facebook.com`,
+    };
+
+    return {
+      success: true,
+      platform: params.platform,
+      post,
+      postingInstructions: postingInstructions[params.platform],
+    };
   },
 });

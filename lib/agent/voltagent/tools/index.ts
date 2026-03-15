@@ -11,6 +11,7 @@ import { generateCtaImageTool } from "./cta-image";
 import { generateStatusReportTool } from "./status-report";
 import { createCampaignTool } from "./campaign";
 import { deepResearchTool } from "./deep-research";
+import { publishContentTool, listContentTool } from "./publish-content";
 
 export const allTools = {
   register_business: registerBusinessTool,
@@ -27,4 +28,6 @@ export const allTools = {
   generate_status_report: generateStatusReportTool,
   create_campaign: createCampaignTool,
   deep_research: deepResearchTool,
+  publish_content: publishContentTool,
+  list_content: listContentTool,
 };

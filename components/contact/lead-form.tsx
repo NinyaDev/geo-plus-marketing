@@ -134,7 +134,7 @@ export function LeadForm() {
         <Input
           id="city"
           label="City *"
-          placeholder="Miami"
+          placeholder="Salt Lake City"
           required
           value={form.city}
           onChange={update("city")}

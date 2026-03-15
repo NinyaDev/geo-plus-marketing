@@ -4,6 +4,14 @@ import { z } from "zod";
 import { contentModel } from "../models";
 import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/client";
 
+function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 120);
+}
+
 export const generateLandingPageTool = tool({
   description:
     "Generate a complete, location-specific HTML landing page with LocalBusiness JSON-LD schema, FAQ section, and CTAs for a local service business.",
@@ -53,6 +61,7 @@ Output ONLY the HTML code, no markdown wrapping.`;
           business_id: params.businessId,
           type: "landing_page",
           title: `${params.service} in ${params.city} — Landing Page`,
+          slug: generateSlug(`${params.service} in ${params.city} Landing Page`),
           body: html,
           target_city: params.city,
           target_service: params.service,

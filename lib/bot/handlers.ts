@@ -63,17 +63,22 @@ export function registerBotHandlers(bot: Telegraf): void {
     const user = extractUserMeta(ctx);
     await ctx.reply(
       `Welcome to GEOPlusMarketing, ${user.firstName}! 🚀\n\n` +
-        `I'm your autonomous marketing agent powered by AI. Here's what I can do:\n\n` +
-        `📊 /status — Agent status & loaded tools\n` +
-        `❓ /help — Show available commands\n\n` +
-        `Get started by telling me about your business!\n` +
-        `Example: "I'm a plumber in Miami, FL"`
+        `I'm your AI marketing assistant. I help you manage content, leads, and campaigns for your client businesses.\n\n` +
+        `To get started:\n` +
+        `- Register your first client: "Register a new client: ABC Plumbing in Salt Lake City, UT"\n` +
+        `- Or tell me which client to work on today\n\n` +
+        `/help — Show all commands\n` +
+        `/status — Agent status`
     );
   });
 
   bot.command("help", async (ctx) => {
     await ctx.reply(
       `GEOPlusMarketing Agent — Commands & Capabilities\n\n` +
+        `Getting Started\n` +
+        `- Register a client: "Register ABC Plumbing in Salt Lake City, UT"\n` +
+        `- View your clients: "Show my clients"\n` +
+        `- Select a client: "Work on ABC Plumbing"\n\n` +
         `Commands:\n` +
         `/start — Welcome message\n` +
         `/help — This help message\n` +
@@ -83,7 +88,8 @@ export function registerBotHandlers(bot: Telegraf): void {
         `- Generate geo-targeted blog posts\n` +
         `- Create social media posts (GBP, Instagram, Facebook)\n` +
         `- Draft review responses\n` +
-        `- Generate landing pages with schema markup\n\n` +
+        `- Generate landing pages with schema markup\n` +
+        `- List drafts and publish content\n\n` +
         `Lead Generation\n` +
         `- Prospect local businesses with quality scoring\n` +
         `- Track and manage leads\n` +

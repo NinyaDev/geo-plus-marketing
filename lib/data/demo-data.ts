@@ -78,9 +78,9 @@ export const demoBusiness: Business = {
   id: "biz_001",
   name: "GEOPlusMarketing",
   slug: "geoplusmarketing",
-  city: "Miami",
-  state: "FL",
-  phone: "3055551234",
+  city: "Salt Lake City",
+  state: "UT",
+  phone: "8015551234",
   email: "info@geoplusmarketing.com",
   website: "https://geoplusmarketing.com",
   services: [
@@ -101,70 +101,70 @@ export const demoLeads: Lead[] = [
   {
     id: "lead_001",
     business_id: null,
-    name: "Maria Rodriguez",
-    email: "maria.r@miamidental.com",
-    phone: "3055559876",
+    name: "Lisa Hansen",
+    email: "lisa@saltlakedental.com",
+    phone: "8015559876",
     service_requested: "Full GEO Package",
-    city: "Miami",
+    city: "Salt Lake City",
     status: "converted",
     notes: "Our competitors are showing up in ChatGPT results but we're not. Need help ASAP.",
-    metadata: { business_name: "Miami Dental Group" },
+    metadata: { business_name: "Salt Lake Dental Group" },
     source: "landing_page",
     created_at: "2026-02-28T14:30:00Z",
   },
   {
     id: "lead_002",
     business_id: null,
-    name: "James Thompson",
-    email: "j.thompson@thompsonlaw.com",
-    phone: "3055554321",
+    name: "Mark Jensen",
+    email: "mark@jensenlaw.com",
+    phone: "8015554321",
     service_requested: "AI Visibility Scan",
-    city: "Coral Gables",
+    city: "Provo",
     status: "qualified",
     notes: "We want to understand how AI search engines see our firm. Interested in the free scan.",
-    metadata: { business_name: "Thompson Legal Partners" },
+    metadata: { business_name: "Jensen Legal Partners" },
     source: "blog",
     created_at: "2026-03-01T09:15:00Z",
   },
   {
     id: "lead_003",
     business_id: null,
-    name: "Ana Gutierrez",
-    email: "ana@sunshineHVAC.com",
-    phone: "3055558765",
+    name: "Bryce Sorensen",
+    email: "bryce@wasatchhvac.com",
+    phone: "8015558765",
     service_requested: "Content Optimization",
-    city: "Miami Beach",
+    city: "Sandy",
     status: "contacted",
     notes: "We have great Google rankings but AI search never mentions us. What can we do?",
-    metadata: { business_name: "Sunshine HVAC" },
+    metadata: { business_name: "Wasatch HVAC" },
     source: "google",
     created_at: "2026-03-02T11:45:00Z",
   },
   {
     id: "lead_004",
     business_id: null,
-    name: "Robert Chen",
-    email: "r.chen@chenrealty.com",
-    phone: "3055553456",
+    name: "Emily Park",
+    email: "emily@parkrealty.com",
+    phone: "8015553456",
     service_requested: "Schema & Structured Data",
-    city: "Doral",
+    city: "Draper",
     status: "new",
     notes: "Need structured data and schema markup for our 12 listings pages. Want AI to cite us.",
-    metadata: { business_name: "Chen Realty Group" },
+    metadata: { business_name: "Park Realty Group" },
     source: "contact_form",
     created_at: "2026-03-03T16:20:00Z",
   },
   {
     id: "lead_005",
     business_id: null,
-    name: "Sarah Miller",
-    email: "sarah@millerplumbing.com",
-    phone: "3055557654",
+    name: "Tyler Briggs",
+    email: "tyler@briggsplumbing.com",
+    phone: "8015557654",
     service_requested: "AI Visibility Scan",
-    city: "Kendall",
+    city: "Orem",
     status: "new",
     notes: "Heard about AI search optimization on a podcast. Want to see where we stand.",
-    metadata: { business_name: "Miller Plumbing Co" },
+    metadata: { business_name: "Briggs Plumbing Co" },
     source: "social_media",
     created_at: "2026-03-04T08:00:00Z",
   },
@@ -196,7 +196,7 @@ It gets worse:
 
 ## What This Means for Local Businesses
 
-When someone asks ChatGPT "Who's the best dentist in Miami?", the AI doesn't look at your Google rankings. It looks at:
+When someone asks ChatGPT "Who's the best dentist in Salt Lake City?", the AI doesn't look at your Google rankings. It looks at:
 
 - **Structured data** on your website (JSON-LD, schema markup)
 - **Consistent citations** across the web
@@ -253,7 +253,7 @@ GEO — Generative Engine Optimization — is the practice of optimizing your br
 
 ## Why GEO Matters Now
 
-AI search isn't coming — it's here. When someone asks Perplexity "Who's the best HVAC company in Fort Lauderdale?", the AI synthesizes information from across the web and delivers a direct answer. No clicking through 10 blue links.
+AI search isn't coming — it's here. When someone asks Perplexity "Who's the best HVAC company in Sandy, Utah?", the AI synthesizes information from across the web and delivers a direct answer. No clicking through 10 blue links.
 
 If your business has:
 - Strong structured data (JSON-LD schema markup)
@@ -266,7 +266,7 @@ If your business has:
 ## The GEO Framework
 
 ### 1. Scan — See What AI Sees
-We query multiple AI engines with prompts relevant to your business and market. "Best plumber in Miami", "top-rated dentist near Coral Gables", etc. We record whether you're mentioned, how you're described, and how you compare to competitors.
+We query multiple AI engines with prompts relevant to your business and market. "Best plumber in Salt Lake City", "top-rated dentist near Provo", etc. We record whether you're mentioned, how you're described, and how you compare to competitors.
 
 ### 2. Analyze — Find the Gaps
 We identify which signals are strong, which are weak, and which are missing entirely. Common gaps include:
@@ -391,7 +391,7 @@ export const demoCampaigns: Campaign[] = [
   {
     id: "camp_001",
     business_id: "biz_001",
-    name: "AI Visibility Awareness — Miami",
+    name: "AI Visibility Awareness — Salt Lake City",
     type: "seo",
     status: "active",
     budget: 3500,
