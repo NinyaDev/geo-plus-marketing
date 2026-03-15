@@ -20,13 +20,6 @@ function generateSlug(title: string): string {
 }
 
 export async function PATCH(request: Request) {
-  if (!isSupabaseConfigured()) {
-    return NextResponse.json(
-      { error: "Supabase not configured" },
-      { status: 500 }
-    );
-  }
-
   const body = await request.json();
   const { id, status } = body;
 
@@ -35,6 +28,18 @@ export async function PATCH(request: Request) {
       { error: "id and status are required" },
       { status: 400 }
     );
+  }
+
+  // Handle demo data IDs (content_001, etc.) — not in Supabase
+  if (id.startsWith("content_") || !isSupabaseConfigured()) {
+    return NextResponse.json({
+      content: {
+        id,
+        status,
+        slug: generateSlug(id),
+        published_at: status === "published" ? new Date().toISOString() : null,
+      },
+    });
   }
 
   const supabase = getSupabaseAdmin();

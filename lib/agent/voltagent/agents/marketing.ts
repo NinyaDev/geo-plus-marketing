@@ -49,7 +49,9 @@ Formatting rules (IMPORTANT — you respond via Telegram):
 - Minimal emojis — one or two per message maximum
 - Lists should use simple dashes or numbers
 
-For tool calls, always include the user's telegramUserId when needed for database operations.`;
+IMPORTANT — telegramUserId:
+The current user's Telegram ID is: {{TELEGRAM_USER_ID}}
+Use this value for ANY tool call that requires telegramUserId. NEVER ask the user for their Telegram ID.`;
 
 // Sonnet 4.6 pricing per million tokens
 const COST_PER_M_INPUT = 3.0;
@@ -64,11 +66,16 @@ export async function runMarketingAgent(
   message: string,
   options: MarketingAgentOptions
 ): Promise<string> {
+  const systemPrompt = SYSTEM_PROMPT.replace(
+    "{{TELEGRAM_USER_ID}}",
+    options.userId
+  );
+
   const messages: Array<{
     role: "system" | "user" | "assistant";
     content: string;
   }> = [
-    { role: "system", content: SYSTEM_PROMPT },
+    { role: "system", content: systemPrompt },
     ...(options.conversationHistory || []),
     { role: "user", content: message },
   ];
