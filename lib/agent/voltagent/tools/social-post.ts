@@ -87,13 +87,15 @@ Make it geo-targeted to ${params.city} — mention local areas, seasonal relevan
         title,
         slug: generateSlug(`${params.platform} ${params.postType} ${params.service} ${params.city}`),
         body: post,
-        excerpt,
-        author: "GEOPlusMarketing",
-        tags: [params.platform, params.postType, params.city.toLowerCase()],
         target_city: params.city,
         target_service: params.service,
         platform: params.platform,
         status: "draft",
+        metadata: {
+          excerpt,
+          author: "GEOPlusMarketing",
+          tags: [params.platform, params.postType, params.city.toLowerCase()],
+        },
       };
       if (businessId) row.business_id = businessId;
 

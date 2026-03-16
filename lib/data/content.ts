@@ -1,6 +1,17 @@
 import { isSupabaseConfigured } from "../supabase/client";
 import { demoContent, type ContentPiece } from "./demo-data";
 
+/** Merge metadata.excerpt / metadata.author / metadata.tags into top-level fields */
+function normalizeContent(row: Record<string, unknown>): ContentPiece {
+  const meta = (row.metadata as Record<string, unknown>) || {};
+  return {
+    ...row,
+    excerpt: (row.excerpt as string) || (meta.excerpt as string) || "",
+    author: (row.author as string) || (meta.author as string) || "GEOPlusMarketing",
+    tags: (row.tags as string[]) || (meta.tags as string[]) || [],
+  } as ContentPiece;
+}
+
 export async function getContent(options?: {
   type?: string;
   status?: string;
@@ -16,7 +27,7 @@ export async function getContent(options?: {
       if (options?.type) query = query.eq("type", options.type);
       if (options?.status) query = query.eq("status", options.status);
       const { data } = await query;
-      if (data?.length) return data as ContentPiece[];
+      if (data?.length) return data.map(normalizeContent);
     } catch {
       // fall through to demo data
     }
@@ -40,7 +51,7 @@ export async function getContentBySlug(
         .select("*")
         .eq("slug", slug)
         .single();
-      if (data) return data as ContentPiece;
+      if (data) return normalizeContent(data);
     } catch {
       // fall through
     }

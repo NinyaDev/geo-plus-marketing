@@ -75,13 +75,15 @@ Format the output in Markdown.`;
         title,
         slug: generateSlug(title),
         body: content,
-        excerpt,
-        author: "GEOPlusMarketing",
-        tags: [params.service.toLowerCase(), params.city.toLowerCase(), "geo"],
         target_keyword: `${params.service} in ${params.city}`,
         target_city: params.city,
         target_service: params.service,
         status: "draft",
+        metadata: {
+          excerpt,
+          author: "GEOPlusMarketing",
+          tags: [params.service.toLowerCase(), params.city.toLowerCase(), "geo"],
+        },
       };
       if (businessId) row.business_id = businessId;
 
