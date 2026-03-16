@@ -4,7 +4,7 @@ import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/client";
 
 export const registerBusinessTool = tool({
   description:
-    "Register a CLIENT's business that this franchisee manages. Use ONLY when the franchisee explicitly wants to add a new client. Always confirm with the user before calling this tool.",
+    "Register the franchisee's own business operation (their GEO sales business). Usually done once. Always confirm with the user before calling this tool.",
   inputSchema: z.object({
     name: z.string().describe("Business name"),
     serviceType: z
@@ -69,7 +69,7 @@ export const registerBusinessTool = tool({
 
 export const getBusinessTool = tool({
   description:
-    "Get the list of client businesses managed by this franchisee. Use to check existing clients before registering a new one, or to look up a specific client's details.",
+    "Get the franchisee's registered business. Use to find the businessId needed for other tools (adding leads, generating content, etc.).",
   inputSchema: z.object({
     telegramUserId: z.string().describe("Telegram user ID"),
     businessId: z.string().optional().describe("Specific business ID to fetch"),

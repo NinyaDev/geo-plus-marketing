@@ -4,7 +4,7 @@ import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/client";
 
 export const getLeadsTool = tool({
   description:
-    "Get leads for the franchisee's client businesses. Use when the user asks to see their leads, check lead status, or review their pipeline.",
+    "Get the franchisee's leads (businesses that have shown interest in buying GEO services). Use when the user asks to see leads, check pipeline, or review lead status. Does NOT return prospects (outreach targets).",
   inputSchema: z.object({
     telegramUserId: z.string().describe("Telegram user ID of the franchisee"),
     status: z

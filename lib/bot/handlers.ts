@@ -62,11 +62,12 @@ export function registerBotHandlers(bot: Telegraf): void {
   bot.command("start", async (ctx) => {
     const user = extractUserMeta(ctx);
     await ctx.reply(
-      `Welcome to GEOPlusMarketing, ${user.firstName}! 🚀\n\n` +
-        `I'm your AI marketing assistant. I help you manage content, leads, and campaigns for your client businesses.\n\n` +
+      `Welcome to GEOPlusMarketing, ${user.firstName}!\n\n` +
+        `I'm your AI sales assistant. I help you find prospects, manage leads, and create content to sell GEO services.\n\n` +
         `To get started:\n` +
-        `- Register your first client: "Register a new client: ABC Plumbing in Salt Lake City, UT"\n` +
-        `- Or tell me which client to work on today\n\n` +
+        `- Register your business: "Register my business: GEO Services in Salt Lake City, UT"\n` +
+        `- Find prospects: "Find IT companies in Lehi that need GEO"\n` +
+        `- Add a lead: "Add a lead: John Smith, john@test.com, interested in GEO"\n\n` +
         `/help — Show all commands\n` +
         `/status — Agent status`
     );
@@ -76,19 +77,21 @@ export function registerBotHandlers(bot: Telegraf): void {
     await ctx.reply(
       `GEOPlusMarketing Agent — Commands & Capabilities\n\n` +
         `Getting Started\n` +
-        `- Register a client: "Register ABC Plumbing in Salt Lake City, UT"\n` +
-        `- View your clients: "Show my clients"\n` +
-        `- Select a client: "Work on ABC Plumbing"\n\n` +
+        `- Register your business: "Register my GEO business in Salt Lake City"\n` +
+        `- Find prospects: "Find plumbers in Provo that need GEO"\n` +
+        `- Add a lead: "Add lead: John, john@biz.com, wants AI visibility"\n\n` +
         `Commands:\n` +
         `/start — Welcome message\n` +
         `/help — This help message\n` +
-        `/status — Agent status & loaded tools\n\n` +
+        `/status — Agent status\n\n` +
         `What I can do (just ask in natural language):\n\n` +
         `Lead Management (Core)\n` +
-        `- Add leads and auto-sync to GoHighLevel CRM\n` +
-        `- View leads by status: "Show my leads"\n` +
-        `- Generate lead reports\n` +
-        `- Prospect local businesses with quality scoring\n\n` +
+        `- Add leads (interested businesses) and auto-sync to GoHighLevel\n` +
+        `- View leads: "Show my leads"\n` +
+        `- Generate lead reports\n\n` +
+        `Prospecting\n` +
+        `- Find local businesses that need GEO: "Prospect HVAC in SLC"\n` +
+        `- Prospects are outreach targets — not leads until they show interest\n\n` +
         `Content Creation\n` +
         `- Generate geo-targeted blog posts\n` +
         `- Create social media posts (GBP, Instagram, Facebook)\n` +

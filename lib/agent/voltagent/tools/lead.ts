@@ -5,7 +5,7 @@ import { isGhlConfigured, syncContactToGhl, addNoteToContact } from "@/lib/ghl/c
 
 export const addLeadTool = tool({
   description:
-    "Add a new lead (potential customer) to the database and sync to GoHighLevel CRM. Use when a user reports a new lead or wants to track a potential client.",
+    "Add a new lead — a business or person who has shown interest in buying GEO services from the franchisee. Saves to database and syncs to GoHighLevel CRM. Use ONLY for interested parties, NOT for prospects from research.",
   inputSchema: z.object({
     businessId: z.string().describe("Business ID this lead belongs to"),
     source: z
