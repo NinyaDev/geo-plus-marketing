@@ -1,18 +1,21 @@
 import { tool } from "ai";
 import { z } from "zod";
 import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/client";
+import { getOrCreateBusinessId } from "./helpers";
 
 export const generateLeadReportTool = tool({
   description:
     "Generate an aggregated lead report for a business — breakdown by source, status, quality score, and time period.",
   inputSchema: z.object({
-    businessId: z.string().describe("Business ID"),
+    telegramUserId: z.string().describe("Telegram user ID of the franchisee"),
+    businessId: z.string().optional().describe("Business ID (auto-resolved if not provided)"),
     period: z
       .enum(["7d", "30d", "90d", "all"])
       .default("30d")
       .describe("Reporting period"),
   }),
   execute: async (params) => {
+    const businessId = params.businessId || (await getOrCreateBusinessId(params.telegramUserId));
     if (!isSupabaseConfigured()) {
       return { success: false, error: "Supabase not configured" };
     }
@@ -31,7 +34,7 @@ export const generateLeadReportTool = tool({
     const { data: leads, error } = await supabase
       .from("leads")
       .select("*")
-      .eq("business_id", params.businessId)
+      .eq("business_id", businessId)
       .gte("created_at", since)
       .order("created_at", { ascending: false });
 

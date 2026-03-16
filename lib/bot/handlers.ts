@@ -64,10 +64,11 @@ export function registerBotHandlers(bot: Telegraf): void {
     await ctx.reply(
       `Welcome to GEOPlusMarketing, ${user.firstName}!\n\n` +
         `I'm your AI sales assistant. I help you find prospects, manage leads, and create content to sell GEO services.\n\n` +
-        `To get started:\n` +
-        `- Register your business: "Register my business: GEO Services in Salt Lake City, UT"\n` +
-        `- Find prospects: "Find IT companies in Lehi that need GEO"\n` +
-        `- Add a lead: "Add a lead: John Smith, john@test.com, interested in GEO"\n\n` +
+        `Just tell me what you need:\n` +
+        `- "Find plumbers in Lehi that need GEO"\n` +
+        `- "Add a lead: John Smith, john@test.com, interested in GEO"\n` +
+        `- "Show my leads"\n` +
+        `- "Generate a blog post about AI visibility for dentists in SLC"\n\n` +
         `/help — Show all commands\n` +
         `/status — Agent status`
     );
@@ -76,35 +77,25 @@ export function registerBotHandlers(bot: Telegraf): void {
   bot.command("help", async (ctx) => {
     await ctx.reply(
       `GEOPlusMarketing Agent — Commands & Capabilities\n\n` +
-        `Getting Started\n` +
-        `- Register your business: "Register my GEO business in Salt Lake City"\n` +
-        `- Find prospects: "Find plumbers in Provo that need GEO"\n` +
-        `- Add a lead: "Add lead: John, john@biz.com, wants AI visibility"\n\n` +
         `Commands:\n` +
         `/start — Welcome message\n` +
         `/help — This help message\n` +
         `/status — Agent status\n\n` +
-        `What I can do (just ask in natural language):\n\n` +
+        `Just ask me in natural language:\n\n` +
         `Lead Management (Core)\n` +
-        `- Add leads (interested businesses) and auto-sync to GoHighLevel\n` +
-        `- View leads: "Show my leads"\n` +
-        `- Generate lead reports\n\n` +
+        `- "Add a lead: John Smith, john@test.com, wants GEO"\n` +
+        `- "Show my leads" / "Show leads by status"\n` +
+        `- Leads auto-sync to GoHighLevel CRM\n\n` +
         `Prospecting\n` +
-        `- Find local businesses that need GEO: "Prospect HVAC in SLC"\n` +
+        `- "Find dentists in Provo that need GEO"\n` +
         `- Prospects are outreach targets — not leads until they show interest\n\n` +
         `Content Creation\n` +
-        `- Generate geo-targeted blog posts\n` +
-        `- Create social media posts (GBP, Instagram, Facebook)\n` +
-        `- Draft review responses\n` +
-        `- Generate landing pages with schema markup\n` +
-        `- List drafts and publish content\n\n` +
-        `Images & Assets\n` +
-        `- Create CTA advertising visuals\n` +
-        `- Generate JSON-LD structured data\n\n` +
-        `Campaigns & Research\n` +
-        `- Create full marketing campaign plans\n` +
-        `- Generate status reports\n` +
-        `- Deep business and market research`
+        `- "Write a blog post about AI visibility for plumbers in SLC"\n` +
+        `- "Create an Instagram post for my GEO services"\n` +
+        `- "List my drafts" / "Publish my latest draft"\n\n` +
+        `Research & Reports\n` +
+        `- "Give me a status report"\n` +
+        `- "Research the HVAC market in Salt Lake City"`
     );
   });
 

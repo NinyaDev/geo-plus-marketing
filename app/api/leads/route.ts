@@ -102,6 +102,62 @@ export async function POST(request: Request) {
   }
 }
 
+/** Bulk sync all leads (status=lead) to GHL */
+export async function PUT() {
+  try {
+    if (!isGhlConfigured()) {
+      return NextResponse.json({ error: "GoHighLevel not configured (missing GHL_PIT or GHL_LOCATION_ID)" }, { status: 400 });
+    }
+
+    if (!isSupabaseConfigured()) {
+      return NextResponse.json({ error: "Supabase not configured" }, { status: 500 });
+    }
+
+    const supabase = getSupabaseAdmin();
+    const { data: leads, error } = await supabase
+      .from("leads")
+      .select("*")
+      .eq("status", "lead");
+
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (!leads || leads.length === 0) {
+      return NextResponse.json({ success: true, synced: 0, message: "No leads to sync" });
+    }
+
+    let synced = 0;
+    const errors: string[] = [];
+
+    for (const lead of leads) {
+      if (!lead.email) continue;
+
+      const nameParts = (lead.name || "").split(" ");
+      const result = await syncContactToGhl({
+        firstName: nameParts[0] || "Unknown",
+        lastName: nameParts.slice(1).join(" ") || undefined,
+        email: lead.email,
+        phone: lead.phone,
+        source: "GEOPlusMarketing Dashboard Sync",
+        tags: ["geoplus-lead", "bulk-synced"],
+      }).catch((err) => ({ success: false as const, error: String(err) }));
+
+      if (result.success) {
+        synced++;
+      } else {
+        errors.push(`${lead.name || lead.email}: ${result.error}`);
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      synced,
+      total: leads.length,
+      errors: errors.length > 0 ? errors : undefined,
+    });
+  } catch {
+    return NextResponse.json({ error: "Bulk sync failed" }, { status: 500 });
+  }
+}
+
 /** Change a lead/prospect status. Auto-syncs to GHL when status becomes "lead". */
 export async function PATCH(request: Request) {
   try {

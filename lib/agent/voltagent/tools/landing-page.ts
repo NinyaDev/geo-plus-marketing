@@ -3,6 +3,7 @@ import { generateText } from "ai";
 import { z } from "zod";
 import { contentModel } from "../models";
 import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/client";
+import { getOrCreateBusinessId } from "./helpers";
 
 function generateSlug(title: string): string {
   return title
@@ -16,7 +17,8 @@ export const generateLandingPageTool = tool({
   description:
     "Generate a complete, location-specific HTML landing page with LocalBusiness JSON-LD schema, FAQ section, and CTAs for a local service business.",
   inputSchema: z.object({
-    businessId: z.string().describe("Business ID"),
+    telegramUserId: z.string().describe("Telegram user ID of the franchisee"),
+    businessId: z.string().optional().describe("Business ID (auto-resolved if not provided)"),
     service: z.string().describe("Service to promote"),
     city: z.string().describe("Target city"),
     businessName: z.string().describe("Business name"),
@@ -25,6 +27,7 @@ export const generateLandingPageTool = tool({
     zipCode: z.string().optional().describe("ZIP code"),
   }),
   execute: async (params) => {
+    const businessId = params.businessId || (await getOrCreateBusinessId(params.telegramUserId));
     const prompt = `Generate a complete, production-ready HTML landing page for "${params.businessName}" — a ${params.service} business in ${params.city}${params.state ? `, ${params.state}` : ""}.
 
 Requirements:
@@ -58,7 +61,7 @@ Output ONLY the HTML code, no markdown wrapping.`;
       const { data } = await supabase
         .from("content")
         .insert({
-          business_id: params.businessId,
+          business_id: businessId,
           type: "landing_page",
           title: `${params.service} in ${params.city} — Landing Page`,
           slug: generateSlug(`${params.service} in ${params.city} Landing Page`),

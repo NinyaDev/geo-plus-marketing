@@ -1,6 +1,7 @@
 import { tool } from "ai";
 import { z } from "zod";
 import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/client";
+import { getOrCreateBusinessId } from "./helpers";
 
 function generateSlug(title: string): string {
   return title
@@ -67,7 +68,8 @@ export const listContentTool = tool({
   description:
     "List content pieces for a client business. Optionally filter by status (draft/published) or type (blog_post/landing_page/social_post). Use when the franchisee wants to see drafts or published content.",
   inputSchema: z.object({
-    businessId: z.string().describe("Business ID to list content for"),
+    telegramUserId: z.string().describe("Telegram user ID of the franchisee"),
+    businessId: z.string().optional().describe("Business ID (auto-resolved if not provided)"),
     status: z
       .enum(["draft", "published"])
       .optional()
@@ -78,6 +80,7 @@ export const listContentTool = tool({
       .describe("Filter by content type"),
   }),
   execute: async (params) => {
+    const businessId = params.businessId || (await getOrCreateBusinessId(params.telegramUserId));
     if (!isSupabaseConfigured()) {
       return { success: false, error: "Supabase not configured" };
     }
@@ -86,7 +89,7 @@ export const listContentTool = tool({
     let query = supabase
       .from("content")
       .select("id, title, type, status, slug, created_at, published_at")
-      .eq("business_id", params.businessId)
+      .eq("business_id", businessId)
       .order("created_at", { ascending: false });
 
     if (params.status) query = query.eq("status", params.status);

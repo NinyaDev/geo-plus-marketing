@@ -47,7 +47,7 @@ export default async function BlogPostPage({
 
         <div className="mb-4 flex items-center gap-2">
           <Badge variant="info">{content.type}</Badge>
-          {content.tags.map((tag) => (
+          {(content.tags ?? []).map((tag) => (
             <Badge key={tag} variant="default">
               {tag}
             </Badge>
@@ -59,7 +59,7 @@ export default async function BlogPostPage({
         </h1>
 
         <div className="mt-3 flex items-center gap-4 text-sm text-muted">
-          <span>{content.author}</span>
+          <span>{content.author || "GEOPlusMarketing"}</span>
           {content.published_at && (
             <>
               <span>&middot;</span>

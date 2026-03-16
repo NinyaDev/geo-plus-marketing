@@ -3,12 +3,14 @@ import { generateText } from "ai";
 import { z } from "zod";
 import { contentModel } from "../models";
 import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/client";
+import { getOrCreateBusinessId } from "./helpers";
 
 export const createCampaignTool = tool({
   description:
     "Create a full marketing campaign — orchestrates content creation, landing page, social posts, schema markup, and CTA image into a unified campaign plan. Stores a campaign record linking all generated content.",
   inputSchema: z.object({
-    businessId: z.string().describe("Business ID"),
+    telegramUserId: z.string().describe("Telegram user ID of the franchisee"),
+    businessId: z.string().optional().describe("Business ID (auto-resolved if not provided)"),
     businessName: z.string().describe("Business name"),
     service: z.string().describe("Service to campaign for"),
     location: z.string().describe("Target city/location"),
@@ -20,6 +22,7 @@ export const createCampaignTool = tool({
     website: z.string().optional().describe("Business website"),
   }),
   execute: async (params) => {
+    const businessId = params.businessId || (await getOrCreateBusinessId(params.telegramUserId));
     // Generate a campaign plan using GPT-4o
     const prompt = `Create a detailed marketing campaign plan for "${params.businessName}", a ${params.service} business in ${params.location}.
 
@@ -75,7 +78,7 @@ Make it specific to ${params.service} in ${params.location}.`;
       const { data } = await supabase
         .from("campaigns")
         .insert({
-          business_id: params.businessId,
+          business_id: businessId,
           name: campaignName,
           service: params.service,
           location: params.location,

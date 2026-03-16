@@ -2,12 +2,14 @@ import { tool } from "ai";
 import { z } from "zod";
 import { getConfig } from "@/lib/config";
 import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/client";
+import { getOrCreateBusinessId } from "./helpers";
 
 export const deepResearchTool = tool({
   description:
     "Run comprehensive deep research using GPT Researcher (Python sidecar). Produces detailed reports with citations. Falls back to Grok research if GPT Researcher is unavailable.",
   inputSchema: z.object({
-    businessId: z.string().describe("Business ID"),
+    telegramUserId: z.string().describe("Telegram user ID of the franchisee"),
+    businessId: z.string().optional().describe("Business ID (auto-resolved if not provided)"),
     query: z
       .string()
       .describe("Research query (e.g., 'best plumbing companies in Miami and their marketing strategies')"),
@@ -17,6 +19,7 @@ export const deepResearchTool = tool({
       .describe("Type of report to generate"),
   }),
   execute: async (params) => {
+    const businessId = params.businessId || (await getOrCreateBusinessId(params.telegramUserId));
     const config = getConfig();
     const gptResearcherUrl = config.gptResearcher.url;
 
@@ -40,7 +43,7 @@ export const deepResearchTool = tool({
         if (isSupabaseConfigured()) {
           const supabase = getSupabaseAdmin();
           await supabase.from("content").insert({
-            business_id: params.businessId,
+            business_id: businessId,
             type: "blog_post",
             title: `Research: ${params.query.substring(0, 100)}`,
             body: report,
@@ -94,7 +97,7 @@ Be specific, cite real-world patterns, and provide actionable intelligence.`;
       if (isSupabaseConfigured()) {
         const supabase = getSupabaseAdmin();
         await supabase.from("content").insert({
-          business_id: params.businessId,
+          business_id: businessId,
           type: "blog_post",
           title: `Research: ${params.query.substring(0, 100)}`,
           body: report,

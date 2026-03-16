@@ -1,18 +1,21 @@
 import { tool } from "ai";
 import { z } from "zod";
 import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/client";
+import { getOrCreateBusinessId } from "./helpers";
 
 export const generateStatusReportTool = tool({
   description:
     "Generate a comprehensive status report for a business — aggregates leads, content created, campaigns, and analytics over a given period.",
   inputSchema: z.object({
-    businessId: z.string().describe("Business ID"),
+    telegramUserId: z.string().describe("Telegram user ID of the franchisee"),
+    businessId: z.string().optional().describe("Business ID (auto-resolved if not provided)"),
     period: z
       .enum(["7d", "30d", "90d"])
       .default("30d")
       .describe("Reporting period"),
   }),
   execute: async (params) => {
+    const businessId = params.businessId || (await getOrCreateBusinessId(params.telegramUserId));
     if (!isSupabaseConfigured()) {
       return { success: false, error: "Supabase not configured" };
     }
@@ -29,26 +32,26 @@ export const generateStatusReportTool = tool({
     // Fetch all data in parallel
     const [businessRes, leadsRes, contentRes, campaignsRes, analyticsRes] =
       await Promise.all([
-        supabase.from("businesses").select("*").eq("id", params.businessId).single(),
+        supabase.from("businesses").select("*").eq("id", businessId).single(),
         supabase
           .from("leads")
           .select("*")
-          .eq("business_id", params.businessId)
+          .eq("business_id", businessId)
           .gte("created_at", since),
         supabase
           .from("content")
           .select("*")
-          .eq("business_id", params.businessId)
+          .eq("business_id", businessId)
           .gte("created_at", since),
         supabase
           .from("campaigns")
           .select("*")
-          .eq("business_id", params.businessId)
+          .eq("business_id", businessId)
           .gte("created_at", since),
         supabase
           .from("analytics")
           .select("*")
-          .eq("business_id", params.businessId)
+          .eq("business_id", businessId)
           .gte("created_at", since),
       ]);
 

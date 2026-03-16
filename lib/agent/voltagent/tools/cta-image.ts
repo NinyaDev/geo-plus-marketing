@@ -2,12 +2,14 @@ import { tool } from "ai";
 import { z } from "zod";
 import { getConfig } from "@/lib/config";
 import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/client";
+import { getOrCreateBusinessId } from "./helpers";
 
 export const generateCtaImageTool = tool({
   description:
     "Generate CTA advertising visuals, social media graphics, or banner ads using Google Gemini (Nano Banana Pro 2) image generation.",
   inputSchema: z.object({
-    businessId: z.string().describe("Business ID"),
+    telegramUserId: z.string().describe("Telegram user ID of the franchisee"),
+    businessId: z.string().optional().describe("Business ID (auto-resolved if not provided)"),
     service: z.string().describe("Service type to visualize"),
     city: z.string().describe("Target city for geo-targeting"),
     imageType: z
@@ -25,6 +27,7 @@ export const generateCtaImageTool = tool({
     businessName: z.string().optional().describe("Business name to include"),
   }),
   execute: async (params) => {
+    const businessId = params.businessId || (await getOrCreateBusinessId(params.telegramUserId));
     const config = getConfig();
 
     if (!config.google.apiKey) {
@@ -75,7 +78,7 @@ export const generateCtaImageTool = tool({
       if (isSupabaseConfigured()) {
         const supabase = getSupabaseAdmin();
         await supabase.from("content").insert({
-          business_id: params.businessId,
+          business_id: businessId,
           type: "cta_image",
           title: `${params.imageType} — ${params.service} in ${params.city}`,
           body: imagePrompt,

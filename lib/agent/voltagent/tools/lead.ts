@@ -2,12 +2,14 @@ import { tool } from "ai";
 import { z } from "zod";
 import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/client";
 import { isGhlConfigured, syncContactToGhl, addNoteToContact } from "@/lib/ghl/client";
+import { getOrCreateBusinessId } from "./helpers";
 
 export const addLeadTool = tool({
   description:
     "Add a new lead — a business or person who has shown interest in buying GEO services from the franchisee. Saves to database and syncs to GoHighLevel CRM. Use ONLY for interested parties, NOT for prospects from research.",
   inputSchema: z.object({
-    businessId: z.string().describe("Business ID this lead belongs to"),
+    telegramUserId: z.string().describe("Telegram user ID of the franchisee"),
+    businessId: z.string().optional().describe("Business ID (auto-resolved if not provided)"),
     source: z
       .enum(["manual", "landing_page", "prospector", "gpt_researcher"])
       .default("manual")
@@ -26,6 +28,11 @@ export const addLeadTool = tool({
       .describe("Lead quality score 1-10"),
   }),
   execute: async (params) => {
+    // Resolve business ID
+    const businessId =
+      params.businessId ||
+      (await getOrCreateBusinessId(params.telegramUserId));
+
     if (!isSupabaseConfigured()) {
       return {
         success: true,
@@ -37,7 +44,7 @@ export const addLeadTool = tool({
     const { data, error } = await supabase
       .from("leads")
       .insert({
-        business_id: params.businessId,
+        business_id: businessId,
         source: params.source,
         name: params.name,
         email: params.email,

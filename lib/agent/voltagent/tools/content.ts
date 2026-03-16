@@ -3,6 +3,7 @@ import { generateText } from "ai";
 import { z } from "zod";
 import { contentModel } from "../models";
 import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/client";
+import { getOrCreateBusinessId } from "./helpers";
 
 function generateSlug(title: string): string {
   return title
@@ -16,7 +17,8 @@ export const generateGeoContentTool = tool({
   description:
     "Generate geo-targeted SEO content (blog post or landing page copy) for a local service business. Includes local landmarks, neighborhoods, FAQ, and CTAs.",
   inputSchema: z.object({
-    businessId: z.string().describe("Business ID from the database"),
+    telegramUserId: z.string().describe("Telegram user ID of the franchisee"),
+    businessId: z.string().optional().describe("Business ID (auto-resolved if not provided)"),
     service: z.string().describe("Service to write about (e.g., 'emergency plumbing')"),
     city: z.string().describe("Target city"),
     contentType: z
@@ -29,6 +31,10 @@ export const generateGeoContentTool = tool({
     wordCount: z.number().default(800).describe("Approximate word count"),
   }),
   execute: async (params) => {
+    const businessId =
+      params.businessId ||
+      (await getOrCreateBusinessId(params.telegramUserId));
+
     const prompt = `Write a ${params.contentType === "blog_post" ? "blog post" : "landing page copy"} for a ${params.service} business in ${params.city}.
 
 Requirements:
@@ -63,7 +69,7 @@ Format the output in Markdown.`;
       const { data } = await supabase
         .from("content")
         .insert({
-          business_id: params.businessId,
+          business_id: businessId,
           type: params.contentType,
           title,
           slug: generateSlug(title),

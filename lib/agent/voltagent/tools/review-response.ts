@@ -3,12 +3,14 @@ import { generateText } from "ai";
 import { z } from "zod";
 import { contentModel } from "../models";
 import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/client";
+import { getOrCreateBusinessId } from "./helpers";
 
 export const draftReviewResponseTool = tool({
   description:
     "Draft a professional response to a customer review that includes local SEO keywords. Auto-selects tone based on review rating.",
   inputSchema: z.object({
-    businessId: z.string().describe("Business ID"),
+    telegramUserId: z.string().describe("Telegram user ID of the franchisee"),
+    businessId: z.string().optional().describe("Business ID (auto-resolved if not provided)"),
     reviewText: z.string().describe("The customer review text"),
     reviewRating: z.number().min(1).max(5).describe("Star rating (1-5)"),
     platform: z
@@ -21,6 +23,7 @@ export const draftReviewResponseTool = tool({
     city: z.string().optional().describe("Business city"),
   }),
   execute: async (params) => {
+    const businessId = params.businessId || (await getOrCreateBusinessId(params.telegramUserId));
     const toneMap: Record<number, string> = {
       1: "empathetic, apologetic, solution-oriented. Acknowledge the issue, express genuine concern, offer to make it right. Do NOT be defensive.",
       2: "understanding, professional, constructive. Acknowledge disappointment, explain improvements being made.",
@@ -60,7 +63,7 @@ Requirements:
     if (isSupabaseConfigured()) {
       const supabase = getSupabaseAdmin();
       await supabase.from("content").insert({
-        business_id: params.businessId,
+        business_id: businessId,
         type: "review_response",
         title: `${params.reviewRating}★ Review Response — ${params.platform}`,
         body: response,

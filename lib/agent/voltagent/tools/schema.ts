@@ -1,11 +1,13 @@
 import { tool } from "ai";
 import { z } from "zod";
+import { getOrCreateBusinessId } from "./helpers";
 
 export const generateSchemaTool = tool({
   description:
     "Generate JSON-LD structured data (schema.org) for a local service business. Produces valid LocalBusiness or industry-specific schema markup ready to paste into a website.",
   inputSchema: z.object({
-    businessId: z.string().describe("Business ID"),
+    telegramUserId: z.string().describe("Telegram user ID of the franchisee"),
+    businessId: z.string().optional().describe("Business ID (auto-resolved if not provided)"),
     businessName: z.string().describe("Business name"),
     service: z.string().describe("Primary service type"),
     city: z.string().describe("City"),
@@ -26,6 +28,7 @@ export const generateSchemaTool = tool({
     description: z.string().optional().describe("Business description"),
   }),
   execute: async (params) => {
+    const businessId = params.businessId || (await getOrCreateBusinessId(params.telegramUserId));
     // Map common service types to schema.org types
     const schemaTypeMap: Record<string, string> = {
       plumber: "Plumber",

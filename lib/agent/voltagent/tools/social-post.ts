@@ -3,6 +3,7 @@ import { generateText } from "ai";
 import { z } from "zod";
 import { contentModel } from "../models";
 import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/client";
+import { getOrCreateBusinessId } from "./helpers";
 
 function generateSlug(title: string): string {
   return title
@@ -16,7 +17,8 @@ export const createSocialPostTool = tool({
   description:
     "Create a platform-specific social media post (Google Business Profile, Instagram, or Facebook) for a local service business.",
   inputSchema: z.object({
-    businessId: z.string().describe("Business ID"),
+    telegramUserId: z.string().describe("Telegram user ID of the franchisee"),
+    businessId: z.string().optional().describe("Business ID (auto-resolved if not provided)"),
     platform: z
       .enum(["gbp", "instagram", "facebook"])
       .describe("Target social platform"),
@@ -29,6 +31,10 @@ export const createSocialPostTool = tool({
     businessName: z.string().optional().describe("Business name for personalization"),
   }),
   execute: async (params) => {
+    const businessId =
+      params.businessId ||
+      (await getOrCreateBusinessId(params.telegramUserId));
+
     const platformGuide: Record<string, string> = {
       gbp: `Google Business Profile post:
 - Max 1500 characters
@@ -66,12 +72,18 @@ Make it geo-targeted to ${params.city} — mention local areas, seasonal relevan
 
     if (isSupabaseConfigured()) {
       const supabase = getSupabaseAdmin();
+      const title = `${params.platform.toUpperCase()} — ${params.postType} — ${params.service}`;
+      const excerpt = post.replace(/[#*_`\n]/g, " ").trim().slice(0, 200);
+
       await supabase.from("content").insert({
-        business_id: params.businessId,
-        type: "social_post",
-        title: `${params.platform.toUpperCase()} — ${params.postType} — ${params.service}`,
+        business_id: businessId,
+        type: "social",
+        title,
         slug: generateSlug(`${params.platform} ${params.postType} ${params.service} ${params.city}`),
         body: post,
+        excerpt,
+        author: "GEOPlusMarketing",
+        tags: [params.platform, params.postType, params.city.toLowerCase()],
         target_city: params.city,
         target_service: params.service,
         platform: params.platform,

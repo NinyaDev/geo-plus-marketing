@@ -3,14 +3,17 @@ import { generateText } from "ai";
 import { z } from "zod";
 import { researchModel } from "../models";
 import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/client";
+import { getOrCreateBusinessId } from "./helpers";
 
 export const prospectBusinessesTool = tool({
   description:
-    "Scraping agent: search a local region for high-converting prospect businesses (those with bad websites, weak Google Business Profiles, low reviews). Uses Grok for research intelligence. Stores prospects in the outreach list (NOT as leads — prospects become leads only when they show interest).",
+    "Scraping agent: search a local region for high-converting prospect businesses (those with bad websites, weak Google Business Profiles, low reviews). Uses Grok for research intelligence. Stores prospects in the outreach list (NOT as leads — prospects become leads only when they show interest). ALWAYS use this tool for finding new businesses to reach out to. NEVER use add_lead for prospects.",
   inputSchema: z.object({
+    telegramUserId: z.string().describe("Telegram user ID of the franchisee"),
     businessId: z
       .string()
-      .describe("Your business ID (the prospector's business)"),
+      .optional()
+      .describe("Business ID (auto-resolved if not provided)"),
     city: z.string().describe("Target city to prospect"),
     zipCode: z.string().optional().describe("Target ZIP code"),
     serviceType: z
@@ -22,6 +25,11 @@ export const prospectBusinessesTool = tool({
       .describe("Search radius"),
   }),
   execute: async (params) => {
+    // Resolve business ID
+    const businessId =
+      params.businessId ||
+      (await getOrCreateBusinessId(params.telegramUserId));
+
     const prompt = `You are a business prospecting analyst. Find REAL ${params.serviceType} businesses in ${params.city}${params.zipCode ? ` (ZIP: ${params.zipCode})` : ""} within a ${params.radius} radius.
 
 IMPORTANT: Only list businesses you are confident actually exist. Include their real website URL and phone number if you know them. If you are unsure about a business, mark it as "unverified". Do NOT invent fake businesses.
@@ -82,7 +90,7 @@ Return 5-8 prospects. Format as JSON array with fields: name, website_url, phone
     if (isSupabaseConfigured() && prospects.length > 0) {
       const supabase = getSupabaseAdmin();
       const prospectsToInsert = prospects.map((p) => ({
-        business_id: params.businessId,
+        business_id: businessId,
         source: "prospector" as const,
         name: p.name,
         phone: p.phone && p.phone !== "unknown" ? p.phone : null,
