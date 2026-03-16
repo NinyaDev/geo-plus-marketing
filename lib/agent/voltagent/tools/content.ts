@@ -67,31 +67,43 @@ Format the output in Markdown.`;
       const excerpt = excerptMatch.split("\n\n")[0]?.replace(/[#*_`]/g, "").slice(0, 200) || "";
 
       if (!businessId) {
-        console.error("[Content] businessId is null — insert will likely fail");
+        console.error("[Content] businessId is null — will try insert without it");
       }
 
-      const { data, error: insertError } = await supabase
+      const row: Record<string, unknown> = {
+        type: params.contentType === "blog_post" ? "blog" : "landing",
+        title,
+        slug: generateSlug(title),
+        body: content,
+        excerpt,
+        author: "GEOPlusMarketing",
+        tags: [params.service.toLowerCase(), params.city.toLowerCase(), "geo"],
+        target_keyword: `${params.service} in ${params.city}`,
+        target_city: params.city,
+        target_service: params.service,
+        status: "draft",
+      };
+      if (businessId) row.business_id = businessId;
+
+      let { data, error: insertError } = await supabase
         .from("content")
-        .insert({
-          business_id: businessId,
-          type: params.contentType === "blog_post" ? "blog" : "landing",
-          title,
-          slug: generateSlug(title),
-          body: content,
-          excerpt,
-          author: "GEOPlusMarketing",
-          tags: [params.service.toLowerCase(), params.city.toLowerCase(), "geo"],
-          target_keyword: `${params.service} in ${params.city}`,
-          target_city: params.city,
-          target_service: params.service,
-          status: "draft",
-        })
+        .insert(row)
         .select()
         .single();
 
+      // If it failed because of business_id, retry without it
+      if (insertError && businessId) {
+        console.error("[Content] Insert failed with business_id, retrying without:", insertError.message);
+        delete row.business_id;
+        ({ data, error: insertError } = await supabase
+          .from("content")
+          .insert(row)
+          .select()
+          .single());
+      }
+
       if (insertError) {
         console.error("[Content] Supabase insert failed:", insertError.message);
-        // Still return the generated content even if save fails
         return {
           success: true,
           savedToDb: false,

@@ -79,11 +79,10 @@ Make it geo-targeted to ${params.city} — mention local areas, seasonal relevan
       const excerpt = post.replace(/[#*_`\n]/g, " ").trim().slice(0, 200);
 
       if (!businessId) {
-        console.error("[SocialPost] businessId is null — insert will likely fail");
+        console.error("[SocialPost] businessId is null — will try insert without it");
       }
 
-      const { error: insertError } = await supabase.from("content").insert({
-        business_id: businessId,
+      const row: Record<string, unknown> = {
         type: "social",
         title,
         slug: generateSlug(`${params.platform} ${params.postType} ${params.service} ${params.city}`),
@@ -95,7 +94,17 @@ Make it geo-targeted to ${params.city} — mention local areas, seasonal relevan
         target_service: params.service,
         platform: params.platform,
         status: "draft",
-      });
+      };
+      if (businessId) row.business_id = businessId;
+
+      let { error: insertError } = await supabase.from("content").insert(row);
+
+      // If it failed because of business_id, retry without it
+      if (insertError && businessId) {
+        console.error("[SocialPost] Insert failed with business_id, retrying without:", insertError.message);
+        delete row.business_id;
+        ({ error: insertError } = await supabase.from("content").insert(row));
+      }
 
       if (insertError) {
         console.error("[SocialPost] Supabase insert failed:", insertError.message);
