@@ -1,17 +1,17 @@
 import { tool } from "ai";
 import { z } from "zod";
 import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/client";
+import { getOrCreateBusinessId } from "./helpers";
 
 export const getLeadsTool = tool({
   description:
-    "Get the franchisee's leads (businesses that have shown interest in buying GEO services). Use when the user asks to see leads, check pipeline, or review lead status. Does NOT return prospects (outreach targets).",
+    "Get ALL leads and prospects from the database. Use when the user asks to see leads, check pipeline, review status, or asks about contacts. Returns leads from all sources (bot, contact form, prospects).",
   inputSchema: z.object({
     telegramUserId: z.string().describe("Telegram user ID of the franchisee"),
     status: z
       .enum(["lead", "prospect", "contacted"])
       .optional()
-      .describe("Filter by lead status"),
-    businessId: z.string().optional().describe("Filter by specific business ID"),
+      .describe("Filter by status"),
   }),
   execute: async (params) => {
     if (!isSupabaseConfigured()) {
@@ -20,30 +20,18 @@ export const getLeadsTool = tool({
 
     const supabase = getSupabaseAdmin();
 
-    // Get all businesses for this franchisee
-    const { data: businesses, error: bizError } = await supabase
-      .from("businesses")
-      .select("id, name")
-      .eq("telegram_user_id", params.telegramUserId);
+    // Resolve business ID (auto-creates if needed)
+    const businessId = await getOrCreateBusinessId(params.telegramUserId);
 
-    if (bizError) return { success: false, error: bizError.message };
-    if (!businesses || businesses.length === 0) {
-      return {
-        success: true,
-        leads: [],
-        message: "No businesses registered yet. Register a client business first to track leads.",
-      };
-    }
-
-    const businessIds = params.businessId
-      ? [params.businessId]
-      : businesses.map((b) => b.id);
-
+    // Query ALL leads: those belonging to the franchisee's business + orphans (business_id is null)
     let query = supabase
       .from("leads")
       .select("*")
-      .in("business_id", businessIds)
       .order("created_at", { ascending: false });
+
+    if (businessId) {
+      query = query.or(`business_id.eq.${businessId},business_id.is.null`);
+    }
 
     if (params.status) {
       query = query.eq("status", params.status);
@@ -53,13 +41,20 @@ export const getLeadsTool = tool({
 
     if (leadError) return { success: false, error: leadError.message };
 
-    const businessMap = Object.fromEntries(businesses.map((b) => [b.id, b.name]));
-
     return {
       success: true,
       leads: (leads || []).map((l) => ({
-        ...l,
-        businessName: businessMap[l.business_id] || "Unknown",
+        id: l.id,
+        name: l.name,
+        email: l.email,
+        phone: l.phone,
+        city: l.city,
+        service_requested: l.service_requested,
+        status: l.status,
+        source: l.source,
+        quality_score: l.quality_score,
+        notes: l.notes,
+        created_at: l.created_at,
       })),
       total: leads?.length || 0,
       statusFilter: params.status || "all",

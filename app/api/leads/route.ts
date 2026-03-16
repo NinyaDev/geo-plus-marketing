@@ -102,7 +102,7 @@ export async function POST(request: Request) {
   }
 }
 
-/** Bulk sync all leads (status=lead) to GHL */
+/** Bulk sync all records from leads table to GHL as contacts */
 export async function PUT() {
   try {
     if (!isGhlConfigured()) {
@@ -114,11 +114,11 @@ export async function PUT() {
     }
 
     const supabase = getSupabaseAdmin();
-    // Include legacy statuses (new, qualified, converted) from before migration
+    // Sync ALL records with an email — regardless of status
     const { data: leads, error } = await supabase
       .from("leads")
       .select("*")
-      .in("status", ["lead", "new", "qualified", "converted", "won"]);
+      .not("email", "is", null);
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     if (!leads || leads.length === 0) {
@@ -129,8 +129,6 @@ export async function PUT() {
     const errors: string[] = [];
 
     for (const lead of leads) {
-      if (!lead.email) continue;
-
       const nameParts = (lead.name || "").split(" ");
       const result = await syncContactToGhl({
         firstName: nameParts[0] || "Unknown",
@@ -138,7 +136,7 @@ export async function PUT() {
         email: lead.email,
         phone: lead.phone,
         source: "GEOPlusMarketing Dashboard Sync",
-        tags: ["geoplus-lead", "bulk-synced"],
+        tags: ["geoplus-contact", lead.status || "lead"],
       }).catch((err) => ({ success: false as const, error: String(err) }));
 
       if (result.success) {
