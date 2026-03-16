@@ -6,7 +6,7 @@ import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/client";
 
 export const prospectBusinessesTool = tool({
   description:
-    "Scraping agent: search a local region for high-converting prospect businesses (those with bad websites, weak Google Business Profiles, low reviews). Uses Grok for research intelligence. Stores prospects as leads.",
+    "Scraping agent: search a local region for high-converting prospect businesses (those with bad websites, weak Google Business Profiles, low reviews). Uses Grok for research intelligence. Stores prospects in the outreach list (NOT as leads — prospects become leads only when they show interest).",
   inputSchema: z.object({
     businessId: z
       .string()
@@ -77,21 +77,23 @@ Return 5-8 prospects. Format as JSON array with fields: name, website_url, phone
       };
     }
 
-    // Store prospects as leads
+    // Store as prospects (status: "prospect") — NOT leads
+    // They only become leads when the franchisee converts them after outreach
     if (isSupabaseConfigured() && prospects.length > 0) {
       const supabase = getSupabaseAdmin();
-      const leadsToInsert = prospects.map((p) => ({
+      const prospectsToInsert = prospects.map((p) => ({
         business_id: params.businessId,
         source: "prospector" as const,
         name: p.name,
+        phone: p.phone && p.phone !== "unknown" ? p.phone : null,
         city: p.estimated_city || params.city,
         quality_score: p.quality_score,
         notes: `Weaknesses: ${p.weaknesses}\nApproach: ${p.recommended_approach}`,
-        status: "new",
-        metadata: p,
+        status: "prospect",
+        metadata: { ...p, website_url: p.website_url },
       }));
 
-      await supabase.from("leads").insert(leadsToInsert);
+      await supabase.from("leads").insert(prospectsToInsert);
     }
 
     return {

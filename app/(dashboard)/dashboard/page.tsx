@@ -1,8 +1,9 @@
 import { StatCard } from "@/components/ui/stat-card";
 import { LeadsTable } from "@/components/dashboard/leads-table";
+import { ProspectsTable } from "@/components/dashboard/prospects-table";
 import { ContentList } from "@/components/dashboard/content-list";
 import { CampaignStatus } from "@/components/dashboard/campaign-status";
-import { getDashboardStats, getLeads, getContent, getCampaigns } from "@/lib/data";
+import { getDashboardStats, getLeads, getProspects, getContent, getCampaigns } from "@/lib/data";
 import { formatCurrency } from "@/lib/utils/format";
 
 export const dynamic = "force-dynamic";
@@ -12,9 +13,10 @@ export const metadata = {
 };
 
 export default async function DashboardPage() {
-  const [stats, leads, content, campaigns] = await Promise.all([
+  const [stats, leads, prospects, content, campaigns] = await Promise.all([
     getDashboardStats(),
     getLeads(),
+    getProspects(),
     getContent(),
     getCampaigns(),
   ]);
@@ -29,9 +31,9 @@ export default async function DashboardPage() {
           change={`+${stats.leads_this_month} this month`}
         />
         <StatCard
-          label="Conversion Rate"
-          value={`${stats.conversion_rate}%`}
-          change="+2.3% vs last month"
+          label="Prospects"
+          value={prospects.length}
+          change="Clients to reach out to"
         />
         <StatCard
           label="Published Content"
@@ -44,9 +46,12 @@ export default async function DashboardPage() {
         />
       </div>
 
-      {/* Main content grid */}
+      {/* Main content */}
       <div className="grid gap-6 lg:grid-cols-2">
-        <LeadsTable leads={leads} />
+        <div className="space-y-6">
+          <LeadsTable leads={leads} />
+          <ProspectsTable prospects={prospects} />
+        </div>
         <div className="space-y-6">
           <CampaignStatus campaigns={campaigns} />
           <ContentList content={content} />

@@ -1,16 +1,18 @@
 import { isSupabaseConfigured } from "../supabase/client";
 import { demoLeads, type Lead } from "./demo-data";
 
+/** Get real leads (excludes prospects) */
 export async function getLeads(businessId?: string): Promise<Lead[]> {
   if (isSupabaseConfigured()) {
     try {
       const { getSupabase } = await import("../supabase/client");
       const supabase = getSupabase();
-      const query = supabase
+      let query = supabase
         .from("leads")
         .select("*")
+        .neq("status", "prospect")
         .order("created_at", { ascending: false });
-      if (businessId) query.eq("business_id", businessId);
+      if (businessId) query = query.eq("business_id", businessId);
       const { data } = await query;
       if (data?.length) return data as Lead[];
     } catch {
@@ -18,6 +20,27 @@ export async function getLeads(businessId?: string): Promise<Lead[]> {
     }
   }
   return demoLeads;
+}
+
+/** Get prospects (outreach targets, not yet leads) */
+export async function getProspects(businessId?: string): Promise<Lead[]> {
+  if (isSupabaseConfigured()) {
+    try {
+      const { getSupabase } = await import("../supabase/client");
+      const supabase = getSupabase();
+      let query = supabase
+        .from("leads")
+        .select("*")
+        .eq("status", "prospect")
+        .order("quality_score", { ascending: false });
+      if (businessId) query = query.eq("business_id", businessId);
+      const { data } = await query;
+      if (data) return data as Lead[];
+    } catch {
+      // fall through
+    }
+  }
+  return [];
 }
 
 export async function createLead(

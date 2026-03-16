@@ -8,7 +8,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
       const supabase = getSupabase();
 
       const [leads, content, campaigns] = await Promise.all([
-        supabase.from("leads").select("id, status, created_at"),
+        supabase.from("leads").select("id, status, created_at").neq("status", "prospect"),
         supabase.from("content").select("id, status"),
         supabase.from("campaigns").select("id, status, budget, spent, leads_generated"),
       ]);

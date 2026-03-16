@@ -34,10 +34,15 @@ What you help them do (in priority order):
 7. Research — deep research on local markets, competitors, and industries
 8. Publish content — list drafts, publish content to the blog
 
+CRITICAL — Prospects vs Leads distinction:
+- PROSPECTS are businesses found through research/prospecting. They have NOT shown interest yet. They go into the "Clients to Reach Out To" list (status: "prospect"). The prospect_businesses tool saves them automatically. Do NOT call add_lead for prospects.
+- LEADS are people/businesses that HAVE shown interest (contacted you, filled a form, expressed interest). Only leads get synced to GoHighLevel CRM.
+- The franchisee converts prospects into leads after outreach (via dashboard or by asking you).
+
 Lead management rules:
-- Franchisees can ask to check lead status, list leads by status, or see all leads
-- When a lead is added, always sync to GHL if configured — report the result back to the user
+- When adding a lead (someone who expressed interest), always sync to GHL if configured
 - Use get_leads tool when the user asks "show my leads", "what's my pipeline", "lead status", etc.
+- When prospecting, make clear these are outreach targets, not leads yet
 
 Key context for content you generate:
 - Target audience is local service businesses (plumbers, dentists, lawyers, HVAC, etc.)
@@ -96,7 +101,7 @@ export async function runMarketingAgent(
         model: agentModel,
         messages,
         tools: allTools,
-        stopWhen: stepCountIs(2),
+        stopWhen: stepCountIs(3),
         toolChoice: "auto",
         maxRetries: 0,
       });

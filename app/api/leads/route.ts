@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { z } from "zod/v4";
 import { createLead } from "@/lib/data/leads";
 import { isGhlConfigured, syncContactToGhl, addNoteToContact } from "@/lib/ghl/client";
+import { isSupabaseConfigured, getSupabaseAdmin } from "@/lib/supabase/client";
 
 const leadSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -86,6 +88,7 @@ export async function POST(request: Request) {
       }
     }
 
+    revalidatePath("/dashboard");
     return NextResponse.json({
       success: true,
       lead: result.lead,
@@ -96,5 +99,71 @@ export async function POST(request: Request) {
       { error: "Failed to process request" },
       { status: 500 }
     );
+  }
+}
+
+/** Convert a prospect to a lead and optionally sync to GHL */
+export async function PATCH(request: Request) {
+  try {
+    const body = await request.json();
+    const { id, action } = body;
+
+    if (!id || action !== "convert") {
+      return NextResponse.json({ error: "id and action='convert' required" }, { status: 400 });
+    }
+
+    if (!isSupabaseConfigured()) {
+      return NextResponse.json({ error: "Supabase not configured" }, { status: 500 });
+    }
+
+    const supabase = getSupabaseAdmin();
+
+    // Fetch the prospect
+    const { data: prospect, error: fetchErr } = await supabase
+      .from("leads")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (fetchErr || !prospect) {
+      return NextResponse.json({ error: "Prospect not found" }, { status: 404 });
+    }
+
+    // Update status to "new" (real lead)
+    const { error: updateErr } = await supabase
+      .from("leads")
+      .update({ status: "new" })
+      .eq("id", id);
+
+    if (updateErr) {
+      return NextResponse.json({ error: updateErr.message }, { status: 500 });
+    }
+
+    // Sync to GHL if configured and has email
+    let ghlContactId: string | undefined;
+    if (isGhlConfigured() && prospect.email) {
+      const nameParts = (prospect.name || "").split(" ");
+      const ghlResult = await syncContactToGhl({
+        firstName: nameParts[0] || "Unknown",
+        lastName: nameParts.slice(1).join(" ") || undefined,
+        email: prospect.email,
+        phone: prospect.phone,
+        source: "GEOPlusMarketing Prospect Conversion",
+        tags: ["geoplus-lead", "converted-prospect"],
+      }).catch(() => ({ success: false as const, error: "GHL sync failed" }));
+
+      if (ghlResult.success && "contactId" in ghlResult) {
+        ghlContactId = ghlResult.contactId;
+      }
+    }
+
+    revalidatePath("/dashboard");
+    return NextResponse.json({
+      success: true,
+      converted: true,
+      ghlContactId,
+    });
+  } catch {
+    return NextResponse.json({ error: "Failed to convert prospect" }, { status: 500 });
   }
 }
