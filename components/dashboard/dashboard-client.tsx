@@ -90,11 +90,13 @@ export function DashboardClient({ leads: initialLeads, prospects: initialProspec
       const data = await res.json();
 
       if (res.ok) {
-        setSyncResult(
-          data.synced > 0
-            ? `Synced ${data.synced}/${data.total} leads to GHL`
-            : data.message || "No leads to sync"
-        );
+        if (data.synced > 0) {
+          setSyncResult(`Synced ${data.synced}/${data.total} to GHL`);
+        } else if (data.errors?.length) {
+          setSyncResult(`Sync failed: ${data.errors[0]}`);
+        } else {
+          setSyncResult(data.message || "No records to sync");
+        }
       } else {
         setSyncResult(`Error: ${data.error}`);
       }

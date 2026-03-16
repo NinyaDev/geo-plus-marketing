@@ -106,23 +106,40 @@ export async function POST(request: Request) {
 export async function PUT() {
   try {
     if (!isGhlConfigured()) {
+      console.error("[GHL Sync] Not configured — missing GHL_PIT or GHL_LOCATION_ID");
       return NextResponse.json({ error: "GoHighLevel not configured (missing GHL_PIT or GHL_LOCATION_ID)" }, { status: 400 });
     }
 
     if (!isSupabaseConfigured()) {
+      console.error("[GHL Sync] Supabase not configured");
       return NextResponse.json({ error: "Supabase not configured" }, { status: 500 });
     }
 
     const supabase = getSupabaseAdmin();
-    // Sync ALL records with an email — regardless of status
-    const { data: leads, error } = await supabase
+
+    // Query ALL records from leads table
+    const { data: allLeads, error } = await supabase
       .from("leads")
-      .select("*")
-      .not("email", "is", null);
+      .select("*");
+
+    console.log(`[GHL Sync] Supabase query returned ${allLeads?.length ?? 0} total records, error: ${error?.message ?? "none"}`);
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-    if (!leads || leads.length === 0) {
-      return NextResponse.json({ success: true, synced: 0, message: "No leads to sync" });
+
+    // Filter to only those with an email (in JS to avoid Supabase filter issues)
+    const leads = (allLeads || []).filter((l) => l.email && l.email.trim() !== "");
+
+    console.log(`[GHL Sync] ${leads.length} records have email addresses`);
+
+    if (leads.length === 0) {
+      return NextResponse.json({
+        success: true,
+        synced: 0,
+        totalInDb: allLeads?.length ?? 0,
+        message: allLeads?.length
+          ? `Found ${allLeads.length} records but none have email addresses`
+          : "No records in leads table",
+      });
     }
 
     let synced = 0;
@@ -141,8 +158,11 @@ export async function PUT() {
 
       if (result.success) {
         synced++;
+        console.log(`[GHL Sync] Synced: ${lead.name} (${lead.email})`);
       } else {
-        errors.push(`${lead.name || lead.email}: ${result.error}`);
+        const errMsg = `${lead.name || lead.email}: ${"error" in result ? result.error : "unknown error"}`;
+        errors.push(errMsg);
+        console.error(`[GHL Sync] Failed: ${errMsg}`);
       }
     }
 
@@ -152,7 +172,8 @@ export async function PUT() {
       total: leads.length,
       errors: errors.length > 0 ? errors : undefined,
     });
-  } catch {
+  } catch (e) {
+    console.error("[GHL Sync] Unexpected error:", e);
     return NextResponse.json({ error: "Bulk sync failed" }, { status: 500 });
   }
 }

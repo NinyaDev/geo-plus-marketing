@@ -66,11 +66,11 @@ Format the output in Markdown.`;
       const excerptMatch = content.replace(/^#.*\n+/, "").trim();
       const excerpt = excerptMatch.split("\n\n")[0]?.replace(/[#*_`]/g, "").slice(0, 200) || "";
 
-      const { data } = await supabase
+      const { data, error: insertError } = await supabase
         .from("content")
         .insert({
           business_id: businessId,
-          type: params.contentType,
+          type: params.contentType === "blog_post" ? "blog" : "landing",
           title,
           slug: generateSlug(title),
           body: content,
@@ -85,8 +85,22 @@ Format the output in Markdown.`;
         .select()
         .single();
 
+      if (insertError) {
+        console.error("[Content] Supabase insert failed:", insertError.message);
+        // Still return the generated content even if save fails
+        return {
+          success: true,
+          savedToDb: false,
+          error: insertError.message,
+          title,
+          content,
+          wordCount: content.split(/\s+/).length,
+        };
+      }
+
       return {
         success: true,
+        savedToDb: true,
         contentId: data?.id,
         title,
         content,
