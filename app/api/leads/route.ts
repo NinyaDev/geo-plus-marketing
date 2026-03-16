@@ -114,10 +114,11 @@ export async function PUT() {
     }
 
     const supabase = getSupabaseAdmin();
+    // Include legacy statuses (new, qualified, converted) from before migration
     const { data: leads, error } = await supabase
       .from("leads")
       .select("*")
-      .eq("status", "lead");
+      .in("status", ["lead", "new", "qualified", "converted", "won"]);
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     if (!leads || leads.length === 0) {

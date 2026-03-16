@@ -13,8 +13,9 @@ export async function getDashboardStats(): Promise<DashboardStats> {
       ]);
 
       if (leads.data && content.data) {
+        const leadStatuses = ["lead", "new", "qualified", "converted", "won"];
         return {
-          total_leads: leads.data.filter((l) => l.status === "lead").length,
+          total_leads: leads.data.filter((l) => leadStatuses.includes(l.status)).length,
           total_prospects: leads.data.filter(
             (l) => l.status === "prospect" || l.status === "contacted"
           ).length,

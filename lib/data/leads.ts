@@ -21,10 +21,13 @@ export async function getAllLeads(businessId?: string): Promise<Lead[]> {
   return demoLeads;
 }
 
-/** Get leads only (status = "lead") — used by dashboard data */
+// Statuses that count as "lead" (includes legacy values from before migration)
+const LEAD_STATUSES = ["lead", "new", "qualified", "converted", "won"];
+
+/** Get leads (status=lead + legacy statuses) */
 export async function getLeads(businessId?: string): Promise<Lead[]> {
   const all = await getAllLeads(businessId);
-  return all.filter((l) => l.status === "lead");
+  return all.filter((l) => LEAD_STATUSES.includes(l.status));
 }
 
 /** Get prospects + contacted */
