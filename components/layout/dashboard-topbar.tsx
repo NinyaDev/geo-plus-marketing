@@ -3,13 +3,10 @@ import Link from "next/link";
 export function DashboardTopbar() {
   return (
     <header className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-6">
-      {/* Mobile brand */}
-      <Link href="/" className="text-lg font-extrabold tracking-tight text-slate-900 lg:hidden">
+      <Link href="/" className="text-lg font-extrabold tracking-tight text-slate-900">
         GEO<span className="text-accent">Plus</span>
+        <span className="ml-2 text-sm font-normal text-muted">Dashboard</span>
       </Link>
-      <div className="hidden lg:block">
-        <h1 className="text-lg font-semibold text-slate-900">Dashboard</h1>
-      </div>
       <div className="flex items-center gap-4">
         <Link
           href="/"

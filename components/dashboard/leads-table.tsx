@@ -1,19 +1,42 @@
-import { Badge } from "@/components/ui/badge";
+"use client";
+
+import { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { StatusBadge } from "./status-badge";
 import { formatDate, formatPhone } from "@/lib/utils/format";
 import type { Lead } from "@/lib/data/demo-data";
 
-const statusVariant: Record<string, "default" | "success" | "warning" | "error" | "info"> = {
-  new: "info",
-  contacted: "warning",
-  qualified: "default",
-  converted: "success",
-  lost: "error",
-};
+interface LeadsTableProps {
+  leads: Lead[];
+  onStatusChange: (id: string, newStatus: Lead["status"]) => void;
+}
 
-export function LeadsTable({ leads }: { leads: Lead[] }) {
+export function LeadsTable({ leads: initialLeads, onStatusChange }: LeadsTableProps) {
+  const [leads, setLeads] = useState(initialLeads);
+
+  function handleStatusChange(id: string, newStatus: Lead["status"]) {
+    // Optimistically remove from this list if no longer "lead"
+    if (newStatus !== "lead") {
+      setLeads((prev) => prev.filter((l) => l.id !== id));
+    }
+    onStatusChange(id, newStatus);
+  }
+
+  if (leads.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Leads</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted">No leads yet. Leads from the contact form and bot will appear here.</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
-    <Card id="leads">
+    <Card>
       <CardHeader>
         <CardTitle>Recent Leads</CardTitle>
       </CardHeader>
@@ -42,9 +65,11 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
                   <td className="py-3 pr-4 text-slate-600">{lead.service_requested}</td>
                   <td className="py-3 pr-4 text-slate-600">{lead.city}</td>
                   <td className="py-3 pr-4">
-                    <Badge variant={statusVariant[lead.status] ?? "default"}>
-                      {lead.status}
-                    </Badge>
+                    <StatusBadge
+                      id={lead.id}
+                      status={lead.status}
+                      onStatusChange={handleStatusChange}
+                    />
                   </td>
                   <td className="py-3 pr-4 text-slate-600">{formatPhone(lead.phone)}</td>
                   <td className="py-3 text-slate-500">{formatDate(lead.created_at)}</td>

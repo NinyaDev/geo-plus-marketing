@@ -8,7 +8,7 @@ export const getLeadsTool = tool({
   inputSchema: z.object({
     telegramUserId: z.string().describe("Telegram user ID of the franchisee"),
     status: z
-      .enum(["new", "contacted", "qualified", "proposal", "won", "lost"])
+      .enum(["lead", "prospect", "contacted"])
       .optional()
       .describe("Filter by lead status"),
     businessId: z.string().optional().describe("Filter by specific business ID"),

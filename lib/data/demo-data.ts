@@ -24,7 +24,7 @@ export interface Lead {
   website_url?: string;
   gbp_url?: string;
   quality_score?: number;
-  status: "new" | "contacted" | "qualified" | "converted" | "lost";
+  status: "lead" | "prospect" | "contacted";
   notes: string;
   metadata: Record<string, unknown>;
   created_at: string;
@@ -63,13 +63,9 @@ export interface Campaign {
 
 export interface DashboardStats {
   total_leads: number;
-  leads_this_month: number;
-  total_content: number;
+  total_prospects: number;
   published_content: number;
-  active_campaigns: number;
-  total_revenue: number;
-  conversion_rate: number;
-  avg_lead_value: number;
+  total_content: number;
 }
 
 // --- Demo Business ---
@@ -106,7 +102,7 @@ export const demoLeads: Lead[] = [
     phone: "8015559876",
     service_requested: "Full GEO Package",
     city: "Salt Lake City",
-    status: "converted",
+    status: "lead",
     notes: "Our competitors are showing up in ChatGPT results but we're not. Need help ASAP.",
     metadata: { business_name: "Salt Lake Dental Group" },
     source: "landing_page",
@@ -120,7 +116,7 @@ export const demoLeads: Lead[] = [
     phone: "8015554321",
     service_requested: "AI Visibility Scan",
     city: "Provo",
-    status: "qualified",
+    status: "lead",
     notes: "We want to understand how AI search engines see our firm. Interested in the free scan.",
     metadata: { business_name: "Jensen Legal Partners" },
     source: "blog",
@@ -148,7 +144,7 @@ export const demoLeads: Lead[] = [
     phone: "8015553456",
     service_requested: "Schema & Structured Data",
     city: "Draper",
-    status: "new",
+    status: "prospect",
     notes: "Need structured data and schema markup for our 12 listings pages. Want AI to cite us.",
     metadata: { business_name: "Park Realty Group" },
     source: "contact_form",
@@ -162,7 +158,7 @@ export const demoLeads: Lead[] = [
     phone: "8015557654",
     service_requested: "AI Visibility Scan",
     city: "Orem",
-    status: "new",
+    status: "prospect",
     notes: "Heard about AI search optimization on a podcast. Want to see where we stand.",
     metadata: { business_name: "Briggs Plumbing Co" },
     source: "social_media",
@@ -423,12 +419,8 @@ export const demoCampaigns: Campaign[] = [
 // --- Demo Dashboard Stats ---
 
 export const demoDashboardStats: DashboardStats = {
-  total_leads: 42,
-  leads_this_month: 11,
-  total_content: 4,
+  total_leads: 3,
+  total_prospects: 2,
   published_content: 3,
-  active_campaigns: 2,
-  total_revenue: 28500,
-  conversion_rate: 22.5,
-  avg_lead_value: 1850,
+  total_content: 4,
 };

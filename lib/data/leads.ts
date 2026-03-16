@@ -1,8 +1,8 @@
 import { isSupabaseConfigured } from "../supabase/client";
 import { demoLeads, type Lead } from "./demo-data";
 
-/** Get real leads (excludes prospects) */
-export async function getLeads(businessId?: string): Promise<Lead[]> {
+/** Get all leads/prospects/contacted (everything in the leads table) */
+export async function getAllLeads(businessId?: string): Promise<Lead[]> {
   if (isSupabaseConfigured()) {
     try {
       const { getSupabase } = await import("../supabase/client");
@@ -10,11 +10,10 @@ export async function getLeads(businessId?: string): Promise<Lead[]> {
       let query = supabase
         .from("leads")
         .select("*")
-        .neq("status", "prospect")
         .order("created_at", { ascending: false });
       if (businessId) query = query.eq("business_id", businessId);
       const { data } = await query;
-      if (data?.length) return data as Lead[];
+      if (data) return data as Lead[];
     } catch {
       // fall through to demo data
     }
@@ -22,25 +21,16 @@ export async function getLeads(businessId?: string): Promise<Lead[]> {
   return demoLeads;
 }
 
-/** Get prospects (outreach targets, not yet leads) */
+/** Get leads only (status = "lead") — used by dashboard data */
+export async function getLeads(businessId?: string): Promise<Lead[]> {
+  const all = await getAllLeads(businessId);
+  return all.filter((l) => l.status === "lead");
+}
+
+/** Get prospects + contacted */
 export async function getProspects(businessId?: string): Promise<Lead[]> {
-  if (isSupabaseConfigured()) {
-    try {
-      const { getSupabase } = await import("../supabase/client");
-      const supabase = getSupabase();
-      let query = supabase
-        .from("leads")
-        .select("*")
-        .eq("status", "prospect")
-        .order("quality_score", { ascending: false });
-      if (businessId) query = query.eq("business_id", businessId);
-      const { data } = await query;
-      if (data) return data as Lead[];
-    } catch {
-      // fall through
-    }
-  }
-  return [];
+  const all = await getAllLeads(businessId);
+  return all.filter((l) => l.status === "prospect" || l.status === "contacted");
 }
 
 export async function createLead(
@@ -52,7 +42,7 @@ export async function createLead(
       const supabase = getSupabase();
       const { data, error } = await supabase
         .from("leads")
-        .insert({ ...lead, status: "new" })
+        .insert({ ...lead, status: "lead" })
         .select()
         .single();
       if (error) return { success: false, error: error.message };
@@ -65,7 +55,7 @@ export async function createLead(
   const mockLead: Lead = {
     ...lead,
     id: `lead_${Date.now()}`,
-    status: "new",
+    status: "lead",
     created_at: new Date().toISOString(),
   };
   return { success: true, lead: mockLead };

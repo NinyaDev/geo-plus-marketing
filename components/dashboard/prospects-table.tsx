@@ -2,38 +2,36 @@
 
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { StatusBadge } from "./status-badge";
 import { formatPhone } from "@/lib/utils/format";
 import type { Lead } from "@/lib/data/demo-data";
 
-export function ProspectsTable({ prospects: initialProspects }: { prospects: Lead[] }) {
+interface ProspectsTableProps {
+  prospects: Lead[];
+  onStatusChange: (id: string, newStatus: Lead["status"]) => void;
+}
+
+export function ProspectsTable({ prospects: initialProspects, onStatusChange }: ProspectsTableProps) {
   const [prospects, setProspects] = useState(initialProspects);
-  const [converting, setConverting] = useState<string | null>(null);
 
-  async function handleConvert(id: string) {
-    setConverting(id);
-    try {
-      const res = await fetch("/api/leads", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, action: "convert" }),
-      });
-
-      if (res.ok) {
-        setProspects((prev) => prev.filter((p) => p.id !== id));
-      }
-    } catch {
-      // Silently fail — button re-enables
-    } finally {
-      setConverting(null);
+  function handleStatusChange(id: string, newStatus: Lead["status"]) {
+    if (newStatus === "lead") {
+      // Remove from this list — it'll appear in Recent Leads on refresh
+      setProspects((prev) => prev.filter((p) => p.id !== id));
+    } else {
+      // Update status in place
+      setProspects((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, status: newStatus } : p))
+      );
     }
+    onStatusChange(id, newStatus);
   }
 
   if (prospects.length === 0) return null;
 
   return (
-    <Card id="prospects">
+    <Card>
       <CardHeader>
         <CardTitle>Clients to Reach Out To</CardTitle>
       </CardHeader>
@@ -46,7 +44,7 @@ export function ProspectsTable({ prospects: initialProspects }: { prospects: Lea
                 <th className="pb-3 pr-4">City</th>
                 <th className="pb-3 pr-4">Phone</th>
                 <th className="pb-3 pr-4">Score</th>
-                <th className="pb-3">Action</th>
+                <th className="pb-3">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -79,14 +77,11 @@ export function ProspectsTable({ prospects: initialProspects }: { prospects: Lea
                       </Badge>
                     </td>
                     <td className="py-3">
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        disabled={converting === prospect.id}
-                        onClick={() => handleConvert(prospect.id)}
-                      >
-                        {converting === prospect.id ? "Converting..." : "Convert to Lead"}
-                      </Button>
+                      <StatusBadge
+                        id={prospect.id}
+                        status={prospect.status}
+                        onStatusChange={handleStatusChange}
+                      />
                     </td>
                   </tr>
                 );

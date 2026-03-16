@@ -89,7 +89,7 @@ export const generateStatusReportTool = tool({
           total: leads.length,
           bySource: leadsBySource,
           byStatus: leadsByStatus,
-          newThisPeriod: leads.filter((l) => l.status === "new").length,
+          leadsThisPeriod: leads.filter((l) => l.status === "lead").length,
         },
         content: {
           total: content.length,

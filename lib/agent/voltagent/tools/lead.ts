@@ -46,7 +46,7 @@ export const addLeadTool = tool({
         city: params.city,
         notes: params.notes,
         quality_score: params.qualityScore,
-        status: "new",
+        status: "lead",
       })
       .select()
       .single();
