@@ -14,18 +14,26 @@ export async function getOrCreateBusinessId(
   const supabase = getSupabaseAdmin();
 
   // Look up existing business
-  const { data: businesses } = await supabase
+  const { data: businesses, error: lookupErr } = await supabase
     .from("businesses")
     .select("id")
     .eq("telegram_user_id", telegramUserId)
     .order("created_at", { ascending: true })
     .limit(1);
 
-  if (businesses && businesses.length > 0) return businesses[0].id;
+  if (lookupErr) {
+    console.error("[BusinessHelper] Lookup failed:", lookupErr.message);
+  }
+
+  if (businesses && businesses.length > 0) {
+    console.log(`[BusinessHelper] Found business ${businesses[0].id} for user ${telegramUserId}`);
+    return businesses[0].id;
+  }
 
   // Auto-create a default business
   const name = firstName ? `${firstName}'s GEO Services` : "GEO Services";
-  const { data } = await supabase
+  console.log(`[BusinessHelper] No business found for user ${telegramUserId}, creating one...`);
+  const { data, error: insertErr } = await supabase
     .from("businesses")
     .insert({
       telegram_user_id: telegramUserId,
@@ -36,5 +44,11 @@ export async function getOrCreateBusinessId(
     .select("id")
     .single();
 
+  if (insertErr) {
+    console.error("[BusinessHelper] Auto-create failed:", insertErr.message);
+    return null;
+  }
+
+  console.log(`[BusinessHelper] Created business ${data?.id} for user ${telegramUserId}`);
   return data?.id || null;
 }

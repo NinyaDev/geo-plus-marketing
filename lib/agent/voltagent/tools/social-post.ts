@@ -70,12 +70,19 @@ Make it geo-targeted to ${params.city} — mention local areas, seasonal relevan
 
     const post = result.text;
 
+    let savedToDb = false;
+    let saveError: string | undefined;
+
     if (isSupabaseConfigured()) {
       const supabase = getSupabaseAdmin();
       const title = `${params.platform.toUpperCase()} — ${params.postType} — ${params.service}`;
       const excerpt = post.replace(/[#*_`\n]/g, " ").trim().slice(0, 200);
 
-      await supabase.from("content").insert({
+      if (!businessId) {
+        console.error("[SocialPost] businessId is null — insert will likely fail");
+      }
+
+      const { error: insertError } = await supabase.from("content").insert({
         business_id: businessId,
         type: "social",
         title,
@@ -89,6 +96,13 @@ Make it geo-targeted to ${params.city} — mention local areas, seasonal relevan
         platform: params.platform,
         status: "draft",
       });
+
+      if (insertError) {
+        console.error("[SocialPost] Supabase insert failed:", insertError.message);
+        saveError = insertError.message;
+      } else {
+        savedToDb = true;
+      }
     }
 
     const postingInstructions: Record<string, string> = {
@@ -124,6 +138,8 @@ Direct link: https://facebook.com`,
 
     return {
       success: true,
+      savedToDb,
+      ...(saveError ? { saveError } : {}),
       platform: params.platform,
       post,
       postingInstructions: postingInstructions[params.platform],

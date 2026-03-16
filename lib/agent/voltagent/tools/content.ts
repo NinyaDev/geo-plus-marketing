@@ -66,6 +66,10 @@ Format the output in Markdown.`;
       const excerptMatch = content.replace(/^#.*\n+/, "").trim();
       const excerpt = excerptMatch.split("\n\n")[0]?.replace(/[#*_`]/g, "").slice(0, 200) || "";
 
+      if (!businessId) {
+        console.error("[Content] businessId is null — insert will likely fail");
+      }
+
       const { data, error: insertError } = await supabase
         .from("content")
         .insert({
