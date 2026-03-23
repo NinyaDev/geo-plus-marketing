@@ -15,14 +15,18 @@ function extractUserMeta(ctx: {
     language_code?: string;
   };
   chat?: { id: number };
-}): TelegramUserMeta {
+}): TelegramUserMeta | null {
+  if (!ctx.from || !ctx.chat) {
+    console.error("[Telegram] Missing from or chat in context");
+    return null;
+  }
   return {
-    userId: ctx.from!.id,
-    chatId: ctx.chat!.id,
-    username: ctx.from!.username,
-    firstName: ctx.from!.first_name,
-    lastName: ctx.from!.last_name,
-    languageCode: ctx.from!.language_code,
+    userId: ctx.from.id,
+    chatId: ctx.chat.id,
+    username: ctx.from.username,
+    firstName: ctx.from.first_name,
+    lastName: ctx.from.last_name,
+    languageCode: ctx.from.language_code,
   };
 }
 
@@ -61,6 +65,7 @@ function chunkMessage(text: string): string[] {
 export function registerBotHandlers(bot: Telegraf): void {
   bot.command("start", async (ctx) => {
     const user = extractUserMeta(ctx);
+    if (!user) return;
     await ctx.reply(
       `Welcome to GEOPlusMarketing, ${user.firstName}!\n\n` +
         `I'm your AI sales assistant. I help you find prospects, manage leads, and create content to sell GEO services.\n\n` +
@@ -110,10 +115,11 @@ export function registerBotHandlers(bot: Telegraf): void {
 
   bot.on("text", async (ctx) => {
     const user = extractUserMeta(ctx);
+    if (!user) return;
     const userId = String(user.userId);
 
     // Rate limiting
-    const rateCheck = checkRateLimit(userId);
+    const rateCheck = await checkRateLimit(userId);
     if (!rateCheck.allowed) {
       await ctx.reply(
         `You've reached the rate limit (${rateCheck.resetIn}s until reset). Please wait a moment.`

@@ -2,6 +2,7 @@ import type { ConversationTurn } from "./types";
 import { isSupabaseConfigured } from "../supabase/client";
 
 const MAX_TURNS = 50;
+const MAX_RETRIES = 2;
 
 // In-memory fallback when Supabase is unavailable
 const localConversations = new Map<string, ConversationTurn[]>();
@@ -9,8 +10,8 @@ const localConversations = new Map<string, ConversationTurn[]>();
 export async function getHistory(userId: string): Promise<ConversationTurn[]> {
   if (isSupabaseConfigured()) {
     try {
-      const { getSupabase } = await import("../supabase/client");
-      const supabase = getSupabase();
+      const { getSupabaseAdmin } = await import("../supabase/client");
+      const supabase = getSupabaseAdmin();
       const { data } = await supabase
         .from("conversations")
         .select("messages")
@@ -34,43 +35,65 @@ export async function addTurn(
 ): Promise<void> {
   if (isSupabaseConfigured()) {
     try {
-      const { getSupabase } = await import("../supabase/client");
-      const supabase = getSupabase();
+      const { getSupabaseAdmin } = await import("../supabase/client");
+      const supabase = getSupabaseAdmin();
 
-      // Try to fetch existing conversation
-      const { data: existing } = await supabase
-        .from("conversations")
-        .select("id, messages")
-        .eq("user_id", userId)
-        .eq("channel", "telegram")
-        .single();
-
-      let messages: ConversationTurn[] = [];
-      if (existing?.messages) {
-        messages = existing.messages as ConversationTurn[];
-      }
-      messages.push(turn);
-
-      // Trim to MAX_TURNS
-      if (messages.length > MAX_TURNS) {
-        messages = messages.slice(messages.length - MAX_TURNS);
-      }
-
-      if (existing) {
-        await supabase
+      // Retry loop with optimistic locking via updated_at
+      for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+        const { data: existing } = await supabase
           .from("conversations")
-          .update({ messages, updated_at: new Date().toISOString() })
-          .eq("id", existing.id);
-      } else {
-        await supabase.from("conversations").insert({
-          user_id: userId,
-          channel: "telegram",
-          messages,
-        });
+          .select("id, messages, updated_at")
+          .eq("user_id", userId)
+          .eq("channel", "telegram")
+          .single();
+
+        let messages: ConversationTurn[] = [];
+        if (existing?.messages) {
+          messages = existing.messages as ConversationTurn[];
+        }
+        messages.push(turn);
+
+        // Trim to MAX_TURNS
+        if (messages.length > MAX_TURNS) {
+          messages = messages.slice(messages.length - MAX_TURNS);
+        }
+
+        const now = new Date().toISOString();
+
+        if (existing) {
+          // Optimistic lock: only update if updated_at hasn't changed since we read
+          const { error: updateErr, count } = await supabase
+            .from("conversations")
+            .update({ messages, updated_at: now })
+            .eq("id", existing.id)
+            .eq("updated_at", existing.updated_at);
+
+          // If count is 0 and no error, another write happened — retry
+          if (!updateErr && count === 0 && attempt < MAX_RETRIES) {
+            continue;
+          }
+          if (updateErr) {
+            console.error("[Context] Update failed:", updateErr.message);
+          }
+        } else {
+          const { error: insertErr } = await supabase
+            .from("conversations")
+            .insert({
+              user_id: userId,
+              channel: "telegram",
+              messages,
+            });
+          if (insertErr) {
+            console.error("[Context] Insert failed:", insertErr.message);
+          }
+        }
+
+        // Success or exhausted retries — break
+        break;
       }
       return;
-    } catch {
-      // fall through to in-memory
+    } catch (e) {
+      console.error("[Context] Supabase error, falling back to in-memory:", e);
     }
   }
 
@@ -88,8 +111,8 @@ export async function clearHistory(userId: string): Promise<void> {
 
   if (isSupabaseConfigured()) {
     try {
-      const { getSupabase } = await import("../supabase/client");
-      const supabase = getSupabase();
+      const { getSupabaseAdmin } = await import("../supabase/client");
+      const supabase = getSupabaseAdmin();
       await supabase
         .from("conversations")
         .delete()

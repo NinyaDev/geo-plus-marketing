@@ -74,14 +74,30 @@ Return 5-8 prospects. Format as JSON array with fields: name, website_url, phone
     try {
       const jsonMatch = result.text.match(/\[[\s\S]*\]/);
       if (jsonMatch) {
-        prospects = JSON.parse(jsonMatch[0]);
+        const parsed = JSON.parse(jsonMatch[0]);
+        // Validate that parsed data is an array of objects with required fields
+        if (Array.isArray(parsed)) {
+          prospects = parsed.filter(
+            (p: unknown): p is typeof prospects[number] =>
+              typeof p === "object" &&
+              p !== null &&
+              typeof (p as Record<string, unknown>).name === "string" &&
+              (p as Record<string, unknown>).name !== ""
+          );
+        }
+      }
+      if (prospects.length === 0) {
+        return {
+          success: false,
+          rawAnalysis: result.text,
+          message: "Research completed but no valid prospects could be extracted. See raw analysis.",
+        };
       }
     } catch {
-      // If JSON parse fails, return raw analysis
       return {
-        success: true,
+        success: false,
         rawAnalysis: result.text,
-        message: "Prospects analyzed but could not be structured. See raw analysis.",
+        message: "Research completed but the results could not be structured. See raw analysis.",
       };
     }
 

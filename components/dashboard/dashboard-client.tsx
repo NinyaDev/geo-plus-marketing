@@ -44,6 +44,8 @@ export function DashboardClient({ leads: initialLeads, prospects: initialProspec
   const [prospects, setProspects] = useState(initialProspects);
   const [syncing, setSyncing] = useState(false);
   const [syncResult, setSyncResult] = useState<string | null>(null);
+  const [cleaning, setCleaning] = useState(false);
+  const [cleanResult, setCleanResult] = useState<string | null>(null);
 
   // Derive live counts from state
   const leadCount = leads.length;
@@ -78,6 +80,63 @@ export function DashboardClient({ leads: initialLeads, prospects: initialProspec
     } catch (err) {
       console.error("Status update error:", err);
       router.refresh();
+    }
+  }
+
+  async function handleNotesChange(id: string, notes: string) {
+    // Optimistic update
+    setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, notes } : l)));
+    setProspects((prev) => prev.map((p) => (p.id === id ? { ...p, notes } : p)));
+
+    try {
+      const res = await fetch("/api/leads", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, notes }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({ error: "Unknown error" }));
+        console.error("Failed to save notes:", errData);
+        alert(`Notes failed to save: ${errData.error || res.statusText}`);
+        router.refresh();
+      }
+    } catch (err) {
+      console.error("Notes save error:", err);
+      alert("Notes failed to save — check your connection");
+      router.refresh();
+    }
+  }
+
+  async function handleCleanup() {
+    if (!window.confirm("This will permanently delete ALL leads, prospects, content, and other data. Are you sure?")) {
+      return;
+    }
+
+    setCleaning(true);
+    setCleanResult(null);
+
+    try {
+      const res = await fetch("/api/admin/cleanup", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ confirm: "DELETE_ALL_DATA" }),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        setLeads([]);
+        setProspects([]);
+        setCleanResult("All data cleared");
+        router.refresh();
+      } else {
+        setCleanResult(`Error: ${data.error}`);
+      }
+    } catch {
+      setCleanResult("Cleanup failed");
+    } finally {
+      setCleaning(false);
+      setTimeout(() => setCleanResult(null), 5000);
     }
   }
 
@@ -161,11 +220,45 @@ export function DashboardClient({ leads: initialLeads, prospects: initialProspec
             </button>
           </div>
         </div>
-        <LeadsTable leads={leads} onStatusChange={handleStatusChange} />
+        <LeadsTable leads={leads} onStatusChange={handleStatusChange} onNotesChange={handleNotesChange} />
       </div>
 
       {/* Prospects */}
-      <ProspectsTable prospects={prospects} onStatusChange={handleStatusChange} />
+      <ProspectsTable prospects={prospects} onStatusChange={handleStatusChange} onNotesChange={handleNotesChange} />
+
+      {/* Admin: Data Cleanup */}
+      <div className="border-t border-slate-200 pt-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-slate-500">Admin</p>
+            <p className="text-xs text-slate-400">Clear all demo/test data from the database</p>
+          </div>
+          <div className="flex items-center gap-3">
+            {cleanResult && (
+              <span className="text-sm text-slate-500">{cleanResult}</span>
+            )}
+            <button
+              onClick={handleCleanup}
+              disabled={cleaning}
+              className="inline-flex items-center gap-2 rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-medium text-red-600 shadow-sm transition hover:bg-red-50 hover:border-red-300 disabled:opacity-50"
+            >
+              {cleaning ? (
+                <>
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-red-200 border-t-red-500" />
+                  Cleaning...
+                </>
+              ) : (
+                <>
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                  Clear All Data
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

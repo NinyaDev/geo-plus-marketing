@@ -3,6 +3,11 @@ import Link from "next/link";
 export default function Home() {
   return (
     <>
+      {/* ── Urgency Banner ── */}
+      <div className="bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2.5 text-center text-sm font-semibold text-white">
+        Local businesses are already being recommended by AI search — is yours?
+      </div>
+
       {/* ── Hero ── */}
       <section className="relative overflow-hidden bg-surface-dark pt-32 pb-24 md:pt-44 md:pb-36">
         <div
@@ -251,6 +256,87 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Why GEO Now ── */}
+      <section className="relative overflow-hidden bg-surface-dark py-24 md:py-32">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-20 right-0 h-[400px] w-[400px] rounded-full bg-accent/10 blur-[100px]"
+        />
+        <div className="relative mx-auto max-w-7xl px-6">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-sm font-bold uppercase tracking-widest text-amber-400">
+              Why Now
+            </p>
+            <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-white sm:text-4xl md:text-5xl">
+              The Businesses Moving Now Will Own AI Search
+            </h2>
+            <p className="mt-4 text-lg leading-relaxed text-slate-400">
+              AI search isn&apos;t coming — it&apos;s already here. The companies
+              that optimize first are locking in an advantage that gets
+              harder to overcome every month.
+            </p>
+          </div>
+
+          <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+            <div className="rounded-2xl border border-slate-700 bg-slate-800/50 p-6">
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/20 text-amber-400">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+              </div>
+              <h3 className="text-base font-bold text-white">First-Mover Advantage</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-400">
+                AI engines build trust over time. The first businesses to
+                optimize get cited — and once established, they&apos;re
+                extremely hard to displace.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-slate-700 bg-slate-800/50 p-6">
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/20 text-red-400">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6 9 12.75l4.286-4.286a11.948 11.948 0 0 1 4.306 6.43l.776 2.898m0 0 3.182-5.511m-3.182 5.51-5.511-3.181" />
+                </svg>
+              </div>
+              <h3 className="text-base font-bold text-white">Organic Traffic Is Shrinking</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-400">
+                58.5% of Google searches now end without a click. Users get
+                their answer from AI summaries — if you&apos;re not in those
+                summaries, you&apos;re invisible.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-slate-700 bg-slate-800/50 p-6">
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/20 text-blue-400">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" />
+                </svg>
+              </div>
+              <h3 className="text-base font-bold text-white">Competitors Are Moving</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-400">
+                Smart businesses in every market are already investing in GEO.
+                Every week you wait, they build a stronger position in the
+                AI engines your customers use.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-slate-700 bg-slate-800/50 p-6">
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-green-500/20 text-green-400">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+              </div>
+              <h3 className="text-base font-bold text-white">Higher Quality, Free Leads</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-400">
+                AI-referred visitors have stronger intent — they already know
+                what they want. And AI citations cost nothing — no ad spend,
+                no pay-per-click. Just compounding authority.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── Who It's For ── */}
       <section className="bg-surface py-24 md:py-32">
         <div className="mx-auto max-w-7xl px-6">
@@ -306,23 +392,23 @@ export default function Home() {
         />
         <div className="relative mx-auto max-w-3xl px-6 text-center">
           <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl md:text-5xl">
-            Find Out If AI Can Find&nbsp;You
+            Your Competitors Aren&apos;t Waiting
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-slate-400">
-            Get a free AI visibility scan. We&apos;ll show you exactly how
-            ChatGPT, Perplexity, Google AI, and Grok see your
-            brand&nbsp;&mdash;&nbsp;and what to fix first.
+            AI search is a first-mover market. The businesses that optimize now
+            will be the ones AI recommends for years to come. Find out where
+            you stand&nbsp;&mdash;&nbsp;before your competitors lock you out.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link
               href="/contact"
               className="inline-flex h-14 items-center rounded-xl bg-accent px-10 text-base font-bold text-white shadow-lg shadow-accent/30 transition hover:bg-accent-dark hover:shadow-xl hover:shadow-accent/40"
             >
-              Get Your Free Scan
+              Get Your Free Scan Before They Do
             </Link>
           </div>
           <p className="mt-5 text-sm text-slate-500">
-            No contracts. No pressure. Just a clear picture of your AI visibility.
+            Free scan &middot; No obligation &middot; Results in 24 hours
           </p>
         </div>
       </section>

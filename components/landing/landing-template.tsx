@@ -34,6 +34,11 @@ export function LandingTemplate({
 }: LandingTemplateProps) {
   return (
     <>
+      {/* Urgency Banner */}
+      <div className="bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2.5 text-center text-sm font-semibold text-white">
+        {displayService} businesses in {displayCity} are already optimizing for AI search — don&apos;t get left behind
+      </div>
+
       {/* Hero */}
       <section className="relative overflow-hidden bg-surface-dark pt-32 pb-20 md:pt-44 md:pb-28">
         <div
@@ -56,6 +61,15 @@ export function LandingTemplate({
             does your business come up? If not, your competitors are getting
             those customers instead.
           </p>
+
+          {/* Competitive urgency callout */}
+          <div className="mx-auto mt-8 max-w-xl rounded-xl border border-amber-500/30 bg-amber-500/10 px-5 py-3">
+            <p className="text-sm font-medium text-amber-300">
+              Other {displayService.toLowerCase()} businesses in {displayCity} are already being recommended by AI.
+              Every day you wait, they build a stronger lead.
+            </p>
+          </div>
+
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <Link
               href="/contact"
@@ -73,17 +87,34 @@ export function LandingTemplate({
         </div>
       </section>
 
-      {/* The Problem */}
+      {/* The Problem — with competitive framing */}
       <section className="bg-white py-20">
         <div className="mx-auto max-w-5xl px-6">
           <h2 className="text-center text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
-            The AI Search Problem for {displayService} in {displayCity}
+            Your {displayCity} Competitors Are Already Winning in AI Search
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-center text-lg text-muted">
-            80% of searchers now use AI-generated summaries. If your {displayService.toLowerCase()} business
-            isn&apos;t optimized for AI engines, you&apos;re invisible to a growing
-            majority of potential customers.
+            80% of searchers now use AI-generated summaries. The {displayService.toLowerCase()} businesses
+            that optimize first will lock in their advantage — once AI learns to recommend a competitor,
+            displacing them gets harder every month.
           </p>
+
+          {/* Competitive stats bar */}
+          <div className="mx-auto mt-8 grid max-w-3xl gap-4 sm:grid-cols-3">
+            <div className="rounded-xl border border-red-100 bg-red-50 p-4 text-center">
+              <p className="text-2xl font-extrabold text-red-600">61%</p>
+              <p className="mt-1 text-xs text-red-700/70">CTR drop when AI Overviews appear</p>
+            </div>
+            <div className="rounded-xl border border-amber-100 bg-amber-50 p-4 text-center">
+              <p className="text-2xl font-extrabold text-amber-600">80%</p>
+              <p className="mt-1 text-xs text-amber-700/70">of searchers use AI summaries</p>
+            </div>
+            <div className="rounded-xl border border-blue-100 bg-blue-50 p-4 text-center">
+              <p className="text-2xl font-extrabold text-blue-600">$750B</p>
+              <p className="mt-1 text-xs text-blue-700/70">US revenue at risk from AI disruption</p>
+            </div>
+          </div>
+
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[
               "AI Visibility Scan & Scoring",
@@ -131,6 +162,51 @@ export function LandingTemplate({
         </div>
       </section>
 
+      {/* Why GEO Now */}
+      <section className="bg-surface-dark py-20">
+        <div className="mx-auto max-w-5xl px-6">
+          <h2 className="text-center text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+            Why {displayService} Businesses Are Moving to GEO Now
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-center text-lg text-slate-400">
+            The shift is already happening in {displayCity}. Here&apos;s why the smartest businesses
+            aren&apos;t waiting.
+          </p>
+          <div className="mt-12 grid gap-6 sm:grid-cols-2">
+            <div className="rounded-2xl border border-slate-700 bg-slate-800/50 p-6">
+              <h3 className="text-base font-bold text-white">First-Mover Advantage</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-400">
+                AI engines build trust over time. The first {displayService.toLowerCase()} businesses in {displayCity} to
+                optimize will be the ones AI recommends — and once established, they&apos;re
+                extremely hard to displace.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-slate-700 bg-slate-800/50 p-6">
+              <h3 className="text-base font-bold text-white">Organic Traffic Is Dying</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-400">
+                58.5% of Google searches now end without a click. Your customers are getting
+                answers from AI summaries. If you&apos;re not in those summaries, you might
+                as well not exist.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-slate-700 bg-slate-800/50 p-6">
+              <h3 className="text-base font-bold text-white">Your Competitors Are Moving</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-400">
+                Smart {displayService.toLowerCase()} businesses are already investing in GEO. Every week you wait,
+                they build a stronger position in the AI engines your customers use daily.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-slate-700 bg-slate-800/50 p-6">
+              <h3 className="text-base font-bold text-white">Higher Quality, Free Leads</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-400">
+                AI-referred visitors have stronger intent and cost you nothing — no ad spend,
+                no pay-per-click. Just compounding authority that delivers leads automatically.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* FAQ */}
       <section className="bg-white py-20">
         <div className="mx-auto max-w-3xl px-6">
@@ -158,22 +234,25 @@ export function LandingTemplate({
         </div>
       </section>
 
-      {/* CTA */}
+      {/* CTA — with competitive urgency */}
       <section className="bg-surface-dark py-20">
         <div className="mx-auto max-w-3xl px-6 text-center">
           <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-            Find Out If AI Can Find Your {displayService} Business in {displayCity}
+            Your Competitors in {displayCity} Aren&apos;t Waiting
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-lg text-slate-400">
-            Get a free AI visibility scan. No obligation, no pressure &mdash; just a
-            clear picture of how ChatGPT, Perplexity, and Google AI see your brand.
+            AI search is a first-mover market. The {displayService.toLowerCase()} businesses that optimize
+            now will be the ones AI recommends for years to come. Find out where you stand — free.
           </p>
           <Link
             href="/contact"
             className="mt-8 inline-flex h-14 items-center rounded-xl bg-accent px-10 text-base font-bold text-white shadow-lg shadow-accent/30 transition hover:bg-accent-dark"
           >
-            Get Your Free Scan
+            Get Your Free Scan Before They Do
           </Link>
+          <p className="mt-3 text-sm text-slate-500">
+            Free scan &middot; No obligation &middot; Results in 24 hours
+          </p>
         </div>
       </section>
 

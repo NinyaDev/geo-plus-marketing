@@ -4,6 +4,25 @@ import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/client";
 import { isGhlConfigured, syncContactToGhl, addNoteToContact } from "@/lib/ghl/client";
 import { getOrCreateBusinessId } from "./helpers";
 
+/** Normalize a phone string to digits only, validate length. */
+function normalizePhone(raw?: string): { phone?: string; warning?: string } {
+  if (!raw) return {};
+  const digits = raw.replace(/\D/g, "");
+  if (digits.length === 0) return { warning: "Phone number contains no digits." };
+  if (digits.length < 7) return { warning: `Phone "${raw}" seems too short (${digits.length} digits).` };
+  if (digits.length > 15) return { warning: `Phone "${raw}" seems too long (${digits.length} digits).` };
+  // Format as 10-digit US if exactly 10 or 11 starting with 1
+  if (digits.length === 11 && digits.startsWith("1")) {
+    return { phone: digits.slice(1) };
+  }
+  return { phone: digits };
+}
+
+/** Simple email format check (the LLM may pass invalid strings). */
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
 export const addLeadTool = tool({
   description:
     "Add a new lead — a business or person who has shown interest in buying GEO services from the franchisee. Saves to database and syncs to GoHighLevel CRM. Use ONLY for interested parties, NOT for prospects from research.",
@@ -28,6 +47,22 @@ export const addLeadTool = tool({
       .describe("Lead quality score 1-10"),
   }),
   execute: async (params) => {
+    const warnings: string[] = [];
+
+    // --- Validation ---
+
+    // Email format check
+    if (params.email && !isValidEmail(params.email)) {
+      return {
+        success: false,
+        error: `"${params.email}" doesn't look like a valid email address. Please double-check and try again.`,
+      };
+    }
+
+    // Phone normalization
+    const { phone: normalizedPhone, warning: phoneWarning } = normalizePhone(params.phone);
+    if (phoneWarning) warnings.push(phoneWarning);
+
     // Resolve business ID
     const businessId =
       params.businessId ||
@@ -37,10 +72,30 @@ export const addLeadTool = tool({
       return {
         success: true,
         message: `Lead ${params.name || "unnamed"} tracked (in-memory — Supabase not configured).`,
+        warnings: warnings.length ? warnings : undefined,
       };
     }
 
     const supabase = getSupabaseAdmin();
+
+    // Duplicate detection by email
+    if (params.email) {
+      const { data: existing } = await supabase
+        .from("leads")
+        .select("id, name, status, created_at")
+        .eq("email", params.email)
+        .limit(1);
+
+      if (existing && existing.length > 0) {
+        const dup = existing[0];
+        return {
+          success: false,
+          error: `A lead with email "${params.email}" already exists: ${dup.name || "unnamed"} (status: ${dup.status}, added ${new Date(dup.created_at).toLocaleDateString()}). Update the existing lead instead of creating a duplicate.`,
+          existingLeadId: dup.id,
+        };
+      }
+    }
+
     const { data, error } = await supabase
       .from("leads")
       .insert({
@@ -48,7 +103,7 @@ export const addLeadTool = tool({
         source: params.source,
         name: params.name,
         email: params.email,
-        phone: params.phone,
+        phone: normalizedPhone || params.phone,
         service_requested: params.serviceRequested,
         city: params.city,
         notes: params.notes,
@@ -58,7 +113,16 @@ export const addLeadTool = tool({
       .select()
       .single();
 
-    if (error) return { success: false, error: error.message };
+    if (error) {
+      // Handle unique constraint violation as a duplicate
+      if (error.code === "23505" || error.message.includes("duplicate")) {
+        return {
+          success: false,
+          error: `A lead with this information already exists. Check your leads list.`,
+        };
+      }
+      return { success: false, error: error.message };
+    }
 
     // Sync to GoHighLevel CRM
     let ghlContactId: string | undefined;
@@ -71,7 +135,7 @@ export const addLeadTool = tool({
         firstName,
         lastName,
         email: params.email,
-        phone: params.phone,
+        phone: normalizedPhone || params.phone,
         source: "GEOPlusMarketing Bot",
         tags: ["geoplus-lead", "bot-added", params.source],
       });
@@ -97,6 +161,7 @@ export const addLeadTool = tool({
       lead: data,
       ghlContactId,
       ghlSynced: !!ghlContactId,
+      warnings: warnings.length ? warnings : undefined,
     };
   },
 });

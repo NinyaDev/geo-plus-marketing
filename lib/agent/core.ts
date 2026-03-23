@@ -29,17 +29,24 @@ export async function handleMessage(
 
     response = { text: aiResponse, skill: "marketing-agent" };
   } catch (error) {
+    // Log full error server-side for debugging
     console.error("Agent error:", error);
+
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error";
 
     if (errorMessage.includes("API key") || errorMessage.includes("api_key")) {
       response = {
-        text: "The AI agent is not configured yet. Please set up your ANTHROPIC_API_KEY environment variable.",
+        text: "The AI agent is not configured yet. Please contact the system administrator.",
+      };
+    } else if (errorMessage.includes("rate") || errorMessage.includes("429")) {
+      response = {
+        text: "I'm getting too many requests right now. Please wait a minute and try again.",
       };
     } else {
+      // Never expose raw error messages — they may contain URLs, keys, or stack traces
       response = {
-        text: `I encountered an issue processing your request. Please try again.\n\nError: ${errorMessage}`,
+        text: "I encountered an issue processing your request. Please try again in a moment.",
       };
     }
   }
@@ -48,7 +55,6 @@ export async function handleMessage(
     role: "assistant",
     content: response.text,
     timestamp: Date.now(),
-    skill: response.skill,
   });
 
   return response;

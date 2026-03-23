@@ -178,16 +178,28 @@ export async function PUT() {
   }
 }
 
-/** Change a lead/prospect status. Auto-syncs to GHL when status becomes "lead". */
+/** Update a lead/prospect — status changes and/or notes edits. */
 export async function PATCH(request: Request) {
   try {
     const body = await request.json();
-    const { id, status } = body;
+    const { id, status, notes } = body;
+
+    if (!id) {
+      return NextResponse.json({ error: "id is required" }, { status: 400 });
+    }
 
     const validStatuses = ["lead", "prospect", "contacted"];
-    if (!id || !status || !validStatuses.includes(status)) {
+    if (status && !validStatuses.includes(status)) {
       return NextResponse.json(
-        { error: `id and status (${validStatuses.join("/")}) required` },
+        { error: `status must be one of: ${validStatuses.join("/")}` },
+        { status: 400 }
+      );
+    }
+
+    // Must provide at least one field to update
+    if (!status && notes === undefined) {
+      return NextResponse.json(
+        { error: "Provide status and/or notes to update" },
         { status: 400 }
       );
     }
@@ -198,6 +210,8 @@ export async function PATCH(request: Request) {
 
     const supabase = getSupabaseAdmin();
 
+    console.log(`[PATCH /api/leads] id=${id}, status=${status}, notes=${notes !== undefined ? `"${notes.slice(0, 50)}..."` : "undefined"}`);
+
     // Fetch the record
     const { data: record, error: fetchErr } = await supabase
       .from("leads")
@@ -206,18 +220,28 @@ export async function PATCH(request: Request) {
       .single();
 
     if (fetchErr || !record) {
-      return NextResponse.json({ error: "Record not found" }, { status: 404 });
+      console.error(`[PATCH /api/leads] Record not found: id=${id}, error=${fetchErr?.message}`);
+      return NextResponse.json({ error: `Record not found (${fetchErr?.message || "no match"})` }, { status: 404 });
     }
 
-    // Update status
+    // Build update payload
+    const updates: Record<string, unknown> = {};
+    if (status) updates.status = status;
+    if (notes !== undefined) updates.notes = notes;
+
+    console.log(`[PATCH /api/leads] Updating record ${id} with:`, updates);
+
     const { error: updateErr } = await supabase
       .from("leads")
-      .update({ status })
+      .update(updates)
       .eq("id", id);
 
     if (updateErr) {
+      console.error(`[PATCH /api/leads] Update failed:`, updateErr);
       return NextResponse.json({ error: updateErr.message }, { status: 500 });
     }
+
+    console.log(`[PATCH /api/leads] Successfully updated record ${id}`);
 
     // Auto-sync to GHL when changing TO "lead" status
     let ghlContactId: string | undefined;
